@@ -1,9 +1,9 @@
-package org.example.user.global.config
+package org.example.common.global.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "jwt")
-class JwtProperties(
+data class JwtProperties(
     val secret: String,
     val accessTokenExpiration: Long,
     val refreshTokenExpiration: Long,

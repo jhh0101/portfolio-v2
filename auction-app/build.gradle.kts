@@ -8,7 +8,6 @@ dependencies {
     implementation(project(":auction-order-service"))
     implementation(project(":auction-bid-service"))
 
-    // 스프링 부트의 핵심 기능을 직접 추가
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
 }

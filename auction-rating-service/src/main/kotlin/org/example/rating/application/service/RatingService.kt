@@ -29,7 +29,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.servlet.function.ServerResponse.async
-
 @Service
 class RatingService(
     val ratingRepository: RatingRepository,

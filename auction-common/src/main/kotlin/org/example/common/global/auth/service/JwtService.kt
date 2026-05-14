@@ -1,20 +1,19 @@
-package org.example.user.application.auth.service
+package org.example.common.global.auth.service
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.UnsupportedJwtException
-import org.example.user.global.config.JwtProperties
-import org.springframework.stereotype.Service
 import io.jsonwebtoken.security.Keys
+import org.example.common.global.config.JwtProperties
 import org.example.common.global.error.CustomException
 import org.example.common.global.error.GlobalErrorCode
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.Date
 import javax.crypto.SecretKey
-import kotlin.jvm.javaClass
 
 @Service
 class JwtService(

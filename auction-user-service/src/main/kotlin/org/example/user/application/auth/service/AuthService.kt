@@ -7,9 +7,10 @@ import org.example.user.application.auth.dto.SecurityUser
 import org.example.user.application.auth.dto.TokenResponse
 import org.example.user.domain.user.entity.User
 import auction.auctionuserapi.user.error.UserErrorCode
+import org.example.common.global.auth.service.JwtService
 import org.example.user.domain.user.processor.AuthProcessor
 import org.example.user.domain.user.repository.UserRepository
-import org.example.user.global.config.JwtProperties
+import org.example.common.global.config.JwtProperties
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.AuthenticationManager

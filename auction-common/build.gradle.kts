@@ -8,11 +8,22 @@ plugins {
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter-data-jpa")
-    runtimeOnly("com.mysql:mysql-connector-j")
-    api("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.springframework.security:spring-security-test")
+    runtimeOnly("org.postgresql:postgresql")
 
+    api("io.jsonwebtoken:jjwt-api:0.12.3")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    api("org.springframework.boot:spring-boot-starter-security")
+    api("org.springframework.boot:spring-boot-starter-web")
     api("com.querydsl:querydsl-jpa:5.0.0:jakarta")
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
+
+    kapt(platform("org.springframework.boot:spring-boot-dependencies:4.0.0"))
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
+
+    annotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:4.0.0"))
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 tasks.bootJar {
