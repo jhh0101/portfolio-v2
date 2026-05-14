@@ -19,14 +19,14 @@ import java.util.stream.Stream
 @Repository
 interface ProductRepository : JpaRepository<Product, Long> {
 
-    fun existsByCategoryId(categoryId: Long?) : Boolean
+    fun existsByCategoryId(categoryId: Long) : Boolean
 
     @Query(
         ("SELECT p FROM Product p " +
                 "JOIN FETCH p.auction a " +
                 "WHERE p.productId = :productId")
     )
-    fun findWithAuctionById(@Param("productId") productId: Long): Product?
+    fun findWithAuctionByProductId(@Param("productId") productId: Long): Product?
 
     @Modifying
     @Query("UPDATE Product p SET p.viewCount = p.viewCount + 1 WHERE p.productId = :productId")
@@ -37,7 +37,7 @@ interface ProductRepository : JpaRepository<Product, Long> {
                 "FROM Product p " +
                 "JOIN p.auction a " +
                 "WHERE a.status = 'PROCEEDING' " +
-                "AND p.seller.userId = :sellerId")
+                "AND p.sellerId = :sellerId")
     )
     fun productCount(@Param("sellerId") sellerId: Long): Long
 
@@ -46,50 +46,52 @@ interface ProductRepository : JpaRepository<Product, Long> {
 
     fun deleteAllBySellerId(userId: Long)
 
-    @QueryHints(value = [
-            QueryHint(name = "org.hibernate.fetchSize", value = "100"),
-            QueryHint(name = "org.hibernate.readOnly", value = "true")
-    ])
-    @Query(
-        ("SELECT p FROM Product p " +
-                "JOIN FETCH p.auction a " +
-                "WHERE p.productStatus = :status")
-    )
-    fun findAllByProductStatus(@Param("status") status: ProductStatus): Stream<Product>
+    fun findAuctionIdsBySellerIdAndAuctionStatusAndProductStatus(sellerId: Long, auctionStatus: AuctionStatus, productStatus: ProductStatus) : List<Long>
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Query(
-        ("UPDATE Product p SET p.productStatus = :status " +
-                "WHERE p.productStatus = :activeStatus " +
-                "AND p.auction.status = :auctionStatus AND p.auction.endTime <= :now " +
-                "AND EXISTS (SELECT 1 FROM Bid b WHERE b.auction.auctionId = p.auction.auctionId)")
-    )
-    fun updateProductStatusSold(
-        @Param("now") now: LocalDateTime,
-        @Param("status") status: ProductStatus,
-        @Param("activeStatus") activeStatus: ProductStatus,
-        @Param("auctionStatus") auctionStatus: AuctionStatus
-    )
-
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Query(
-        ("UPDATE Product p SET p.productStatus = :status " +
-                "WHERE p.productStatus = :activeStatus " +
-                "AND p.auction.status = :auctionStatus AND p.auction.endTime <= :now " +
-                "AND NOT EXISTS (SELECT 1 FROM Bid b WHERE b.auction.auctionId = p.auction.auctionId)")
-    )
-    fun updateProductStatusFailed(
-        @Param("now") now: LocalDateTime,
-        @Param("status") status: ProductStatus,
-        @Param("activeStatus") activeStatus: ProductStatus,
-        @Param("auctionStatus") auctionStatus: AuctionStatus
-    )
+//    @QueryHints(value = [
+//            QueryHint(name = "org.hibernate.fetchSize", value = "100"),
+//            QueryHint(name = "org.hibernate.readOnly", value = "true")
+//    ])
+//    @Query(
+//        ("SELECT p FROM Product p " +
+//                "JOIN FETCH p.auction a " +
+//                "WHERE p.productStatus = :status")
+//    )
+//    fun findAllByProductStatus(@Param("status") status: ProductStatus): Stream<Product>
+//
+//    @Modifying(clearAutomatically = true, flushAutomatically = true)
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    @Query(
+//        ("UPDATE Product p SET p.productStatus = :status " +
+//                "WHERE p.productStatus = :activeStatus " +
+//                "AND p.auction.status = :auctionStatus AND p.auction.endTime <= :now " +
+//                "AND EXISTS (SELECT 1 FROM Bid b WHERE b.auction.auctionId = p.auction.auctionId)")
+//    )
+//    fun updateProductStatusSold(
+//        @Param("now") now: LocalDateTime,
+//        @Param("status") status: ProductStatus,
+//        @Param("activeStatus") activeStatus: ProductStatus,
+//        @Param("auctionStatus") auctionStatus: AuctionStatus
+//    )
+//
+//    @Modifying(clearAutomatically = true, flushAutomatically = true)
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    @Query(
+//        ("UPDATE Product p SET p.productStatus = :status " +
+//                "WHERE p.productStatus = :activeStatus " +
+//                "AND p.auction.status = :auctionStatus AND p.auction.endTime <= :now " +
+//                "AND NOT EXISTS (SELECT 1 FROM Bid b WHERE b.auction.auctionId = p.auction.auctionId)")
+//    )
+//    fun updateProductStatusFailed(
+//        @Param("now") now: LocalDateTime,
+//        @Param("status") status: ProductStatus,
+//        @Param("activeStatus") activeStatus: ProductStatus,
+//        @Param("auctionStatus") auctionStatus: AuctionStatus
+//    )
 
     @EntityGraph(attributePaths = ["auction"])
     fun findAllByProductIdIn(productIds: List<Long>): List<Product>
 
     @EntityGraph(attributePaths = ["auction", "images"])
-    fun findWithDetailsById(productId: Long): Product?
+    fun findWithDetailsByProductId(productId: Long): Product?
 }

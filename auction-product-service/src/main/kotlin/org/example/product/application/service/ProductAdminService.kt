@@ -9,7 +9,6 @@ import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionuserapi.user.client.UserClient
 import org.example.common.global.error.CustomException
 import org.example.common.global.error.GlobalErrorCode
-import org.example.global.s3.service.S3Service
 import org.example.product.application.dto.ProductImageResponse
 import org.example.product.application.dto.toProductImageDto
 import org.example.product.domain.product.dto.ProductAndAuctionResponse
@@ -18,6 +17,7 @@ import org.example.product.domain.product.dto.toProductAndAuctionDto
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.entity.ProductImage
 import auction.auctionproductapi.product.error.ProductErrorCode
+import org.example.common.global.s3.service.S3Service
 import org.example.product.domain.product.repository.ProductImageRepository
 import org.example.product.domain.product.repository.ProductQueryRepository
 import org.example.product.domain.product.repository.ProductRepository
@@ -78,7 +78,7 @@ class ProductAdminService(
 
     @Transactional
     fun deleteProduct(userId: Long, productId: Long) {
-        val product = productRepository.findWithAuctionById(productId)
+        val product = productRepository.findWithAuctionByProductId(productId)
             ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND, "상품을 찾을 수 없습니다.")
         val auctionId: Long? = product.auction?.auctionId
 

@@ -4,6 +4,7 @@ import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import org.example.auction.domain.auction.entity.Auction
 import auction.auctionproductapi.auction.error.AuctionErrorCode
+import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.error.ProductErrorCode
 import org.example.auction.domain.auction.repository.AuctionRepository
 import org.example.common.global.error.CustomException
@@ -25,9 +26,9 @@ class AuctionCommonService(
         return AuctionCommonResponse(
             auctionId = auction.auctionId ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND),
             productId = auction.product.productId ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND),
-            startPrice = auction.startPrice ?: 0L,
-            currentPrice = auction.currentPrice ?: 0L,
-            status = auction.status?.name,
+            startPrice = auction.startPrice,
+            currentPrice = auction.currentPrice,
+            status = auction.status.name,
             startTime = auction.startTime,
             endTime = auction.endTime
         )
@@ -39,12 +40,16 @@ class AuctionCommonService(
             AuctionCommonResponse(
                 auctionId = auction.auctionId ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND),
                 productId = auction.product.productId ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND),
-                startPrice = auction.startPrice ?: 0L,
-                currentPrice = auction.currentPrice ?: 0L,
-                status = auction.status?.name,
+                startPrice = auction.startPrice,
+                currentPrice = auction.currentPrice,
+                status = auction.status.name,
                 startTime = auction.startTime,
                 endTime = auction.endTime
             )
         }
+    }
+
+    override fun getAuctionIdsByStatus(status: AuctionStatus): List<Long> {
+        return auctionRepository.findAuctionIdsByStatus(status)
     }
 }

@@ -1,4 +1,4 @@
-package org.example.global.s3.config
+package org.example.common.global.s3.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

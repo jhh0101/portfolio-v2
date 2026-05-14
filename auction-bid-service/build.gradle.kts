@@ -20,9 +20,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
-    // Redis & Redisson
-    implementation("org.redisson:redisson:3.42.0")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
 
     // --- Querydsl 필수 설정 ---
     // 1. 라이브러리 (jakarta 버전 사용)

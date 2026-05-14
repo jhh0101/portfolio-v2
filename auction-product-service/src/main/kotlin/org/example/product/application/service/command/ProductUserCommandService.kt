@@ -3,12 +3,14 @@ package org.example.product.application.service.command
 import auction.auctionproductapi.auction.error.AuctionErrorCode
 import auction.auctionproductapi.product.command.ProductUserCommandClient
 import org.example.common.global.error.CustomException
-import org.example.global.s3.service.S3Service
+import org.example.common.global.s3.service.S3Service
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.repository.ProductRepository
 import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
+@Service
 class ProductUserCommandService(
     private val productRepository: ProductRepository,
     private val redissonClient: RedissonClient,

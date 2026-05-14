@@ -40,8 +40,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // S3
-    implementation(platform("software.amazon.awssdk:bom:2.20.0"))
-    implementation("software.amazon.awssdk:s3")
+
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {

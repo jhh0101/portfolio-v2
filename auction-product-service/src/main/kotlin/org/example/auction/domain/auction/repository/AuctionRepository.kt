@@ -21,7 +21,6 @@ interface AuctionRepository : JpaRepository<Auction, Long> {
     @Query(
         ("SELECT a FROM Auction a " +
                 "JOIN FETCH a.product p " +
-                "JOIN FETCH p.seller s " +
                 "WHERE a.auctionId = :auctionId")
     )
     fun findByIdWithPessimisticLock(@Param("auctionId") auctionId: Long): Auction?
@@ -40,5 +39,7 @@ interface AuctionRepository : JpaRepository<Auction, Long> {
     )
 
     fun findAllByAuctionIdIn(auctionIds: List<Long>): List<Auction>
+
+    fun findAuctionIdsByStatus(status: AuctionStatus): List<Long>
 
 }

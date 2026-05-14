@@ -1,6 +1,7 @@
 package org.example.common.global.config
 
 import org.example.common.global.auth.filter.JwtAuthenticationFilter
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Lazy
 import org.springframework.context.annotation.Configuration
@@ -17,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration
 
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties(JwtProperties::class)
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 class SecurityConfig(
     @param:Lazy

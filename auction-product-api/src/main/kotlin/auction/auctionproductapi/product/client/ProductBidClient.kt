@@ -4,11 +4,7 @@ import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.dto.ProductCommonResponse
 import auction.auctionproductapi.product.status.ProductStatus
 
-interface ProductClient {
-    fun productModuleDto(productId: Long) : ProductCommonResponse
-
-    fun productListModuleDto(productIds: List<Long>) : List<ProductCommonResponse>
-
-    fun productCount(userId: Long) : Long
+interface ProductBidClient {
+    fun findAuctionIdsBySellerId(userId: Long, auctionStatus: AuctionStatus, productStatus: ProductStatus) : List<Long>
 
 }

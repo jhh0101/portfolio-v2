@@ -24,6 +24,13 @@ dependencies {
 
     annotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:4.0.0"))
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    // Redis & Redisson
+    implementation("org.redisson:redisson:3.42.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+    implementation(platform("software.amazon.awssdk:bom:2.20.0"))
+    implementation("software.amazon.awssdk:s3")
 }
 
 tasks.bootJar {

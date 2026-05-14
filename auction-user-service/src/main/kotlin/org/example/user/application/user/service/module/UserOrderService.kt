@@ -5,7 +5,9 @@ import auction.auctionuserapi.user.error.UserErrorCode
 import org.example.common.global.error.CustomException
 import org.example.user.domain.user.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
 
+@Service
 class UserOrderService(
     private val userRepository: UserRepository,
 ): UserOrderClient {

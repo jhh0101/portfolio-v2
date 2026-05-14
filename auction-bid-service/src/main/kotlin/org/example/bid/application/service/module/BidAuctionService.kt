@@ -6,7 +6,9 @@ import auction.auctionbidapi.error.BidErrorCode
 import auction.auctionbidapi.status.BidStatus
 import org.example.bid.domain.bid.repository.BidRepository
 import org.example.common.global.error.CustomException
+import org.springframework.stereotype.Service
 
+@Service
 class BidAuctionService(
     private val bidRepository: BidRepository
 ) : BidAuctionClient {

@@ -11,7 +11,9 @@ import org.example.common.global.error.CustomException
 import org.example.product.domain.product.entity.ProductImage
 import org.example.product.domain.product.repository.ProductRepository
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
 
+@Service
 class ProductDetailService(
     private val productRepository: ProductRepository,
     private val userClient: UserClient,

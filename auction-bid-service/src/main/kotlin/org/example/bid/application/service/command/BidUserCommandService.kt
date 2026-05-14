@@ -7,22 +7,28 @@ import auction.auctionbidapi.status.BidStatus
 import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.auction.status.AuctionStatus
+import auction.auctionproductapi.product.client.ProductBidClient
+import auction.auctionproductapi.product.status.ProductStatus
 import auction.auctionuserapi.user.client.UserClient
 import org.example.bid.application.service.BidService
 import org.example.bid.domain.bid.entity.Bid
 import org.example.bid.domain.bid.repository.BidRepository
 import org.example.common.global.error.CustomException
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
+@Service
 class BidUserCommandService(
     private val bidRepository: BidRepository,
     private val bidService: BidService,
     private val auctionClient: AuctionClient,
     private val userClient: UserClient,
+    private val productBidClient: ProductBidClient,
 ) : BidUserCommandClient {
     private val log = LoggerFactory.getLogger(javaClass)
     override fun cancelActiveBidsAndGetRefundTargets(userId: Long) : List<BidCommonResponse>{
-        val bidList: List<Bid> = bidRepository.findTopBidsPerAuctionBySellerId(userId)
+        val auctionIds = productBidClient.findAuctionIdsBySellerId(userId, AuctionStatus.PROCEEDING, ProductStatus.ACTIVE)
+        val bidList: List<Bid> = bidRepository.findTopBidsByAuctionIds(auctionIds)
         val userBids: List<Bid> = bidRepository.findLatestBidsByUserId(userId)
         val userDto = userClient.userModuleDto(userId)
 

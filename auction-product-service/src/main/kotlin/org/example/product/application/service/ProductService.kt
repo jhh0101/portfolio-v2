@@ -13,12 +13,12 @@ import org.example.auction.domain.auction.entity.Auction
 import org.example.auction.domain.auction.repository.AuctionRepository
 import org.example.common.global.error.CustomException
 import org.example.common.global.error.GlobalErrorCode
-import org.example.global.s3.service.S3Service
 import org.example.product.application.dto.*
 import org.example.product.domain.product.dto.*
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.entity.ProductImage
 import auction.auctionproductapi.product.error.ProductErrorCode
+import org.example.common.global.s3.service.S3Service
 import org.example.product.domain.product.repository.ProductImageRepository
 import org.example.product.domain.product.repository.ProductQueryRepository
 import org.example.product.domain.product.repository.ProductRepository
@@ -126,7 +126,7 @@ class ProductService(
         viewedCookieValue: String // Request 안 받음!
     ): ProductDetailResult { // 응답용 DTO를 하나 만듭니다 (기존 응답 + 새 쿠키값)
 
-        val product = productRepository.findWithAuctionById(productId)
+        val product = productRepository.findWithAuctionByProductId(productId)
             ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND)
 
         val userDto = userClient.userModuleDto(product.sellerId)
@@ -184,7 +184,7 @@ class ProductService(
         productRequest: ProductRequest,
         auctionRequest: AuctionRequest
     ): ProductDetailAndAuctionResponse {
-        val product: Product = productRepository.findWithAuctionById(productId)
+        val product: Product = productRepository.findWithAuctionByProductId(productId)
             ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND, "상품을 찾을 수 없습니다.")
 
         if (userId != product.sellerId) {
@@ -219,7 +219,7 @@ class ProductService(
     // 상품 삭제
     @Transactional
     fun deleteProduct(userId: Long, productId: Long) {
-        val product: Product = productRepository.findWithAuctionById(productId)
+        val product: Product = productRepository.findWithAuctionByProductId(productId)
             ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND, "상품을 찾을 수 없습니다.")
 
         if (userId != product.sellerId) {

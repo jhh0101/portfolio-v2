@@ -1,4 +1,4 @@
-package org.example.global.s3.service
+package org.example.common.global.s3.service
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

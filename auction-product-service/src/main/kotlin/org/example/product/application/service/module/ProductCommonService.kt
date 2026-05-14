@@ -17,7 +17,7 @@ class ProductCommonService(
 ) : ProductClient {
 
     override fun productModuleDto(productId: Long) : ProductCommonResponse {
-        val product: Product = productRepository.findWithDetailsById(productId)
+        val product: Product = productRepository.findWithDetailsByProductId(productId)
             ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND)
 
         val auction = checkNotNull(product.auction) { "상품에 연결된 경매 정보가 없습니다. (ID: $productId)" }
