@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class AuctionCommonResponse(
     val auctionId: Long,
-    val productId: Long?,
+    val productId: Long,
     val startPrice: Long,
     val currentPrice: Long,
     val status: String?,

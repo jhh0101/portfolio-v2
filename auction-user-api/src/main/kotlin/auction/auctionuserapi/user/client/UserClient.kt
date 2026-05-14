@@ -6,6 +6,8 @@ interface UserClient {
 
     fun userModuleDto(userId: Long) : UserCommonResponse
 
+    fun userListModuleDto(userIds: List<Long>) : List<UserCommonResponse>
+
     fun getUsersByIds(userIds: List<Long>) : Map<Long, UserCommonResponse>
 
     fun validateUserExists(userId: Long)

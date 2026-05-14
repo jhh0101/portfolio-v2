@@ -1,7 +1,11 @@
 package org.example.bid.domain.bid.dto
 
+import auction.auctionbidapi.error.BidErrorCode
 import com.fasterxml.jackson.annotation.JsonFormat
 import auction.auctionbidapi.status.BidStatus
+import auction.auctionuserapi.user.dto.UserCommonResponse
+import org.example.bid.domain.bid.entity.Bid
+import org.example.common.global.error.CustomException
 import java.time.LocalDateTime
 
 class BidInfoResponse(
@@ -15,13 +19,13 @@ class BidInfoResponse(
     val bidTime: LocalDateTime? = null
 )
 
-fun BidInfo.toDto(): BidInfoResponse {
+fun Bid.toDto(userDto: UserCommonResponse): BidInfoResponse {
     return BidInfoResponse(
-        bidId = this.bidId,
+        bidId = this.bidId ?: throw CustomException(BidErrorCode.BID_NOT_FOUND),
         auctionId = this.auctionId,
-        nickname = this.nickname,
+        nickname = userDto.userNickname,
         bidPrice = this.bidPrice,
         status = this.status,
-        bidTime = this.bidTime
+        bidTime = this.createdAt
     )
 }

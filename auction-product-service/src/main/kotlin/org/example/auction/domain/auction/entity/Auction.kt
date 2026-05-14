@@ -11,7 +11,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import org.example.auction.domain.auction.error.AuctionErrorCode
+import auction.auctionproductapi.auction.error.AuctionErrorCode
 import org.example.common.global.error.CustomException
 import org.example.product.domain.product.entity.Product
 import org.hibernate.annotations.SQLDelete
@@ -33,24 +33,24 @@ class Auction(
     val product: Product,
 
     @Column(name = "start_price")
-    var startPrice: Long? = 0L,
+    var startPrice: Long,
 
     @Column(name = "current_price")
-    var currentPrice: Long? = 0L,
+    var currentPrice: Long,
 
     @Column(name = "start_time")
-    var startTime: LocalDateTime? = null,
+    var startTime: LocalDateTime,
 
     @Column(name = "end_time")
-    var endTime: LocalDateTime? = null,
+    var endTime: LocalDateTime,
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    var status: AuctionStatus? = null,
+    var status: AuctionStatus,
 
     ) {
 
-    fun updateCurrentPrice(currentPrice: Long?) {
+    fun updateCurrentPrice(currentPrice: Long) {
         this.currentPrice = currentPrice
     }
 

@@ -5,7 +5,6 @@ include("auction-user-service")
 
 include("auction-seller-service")
 
-include("auction-auction-service")
 include("auction-product-service")
 include("auction-category-service")
 
@@ -18,9 +17,9 @@ include("auction-app")
 
 // 하위 모듈
 include("auction-user-api")
-include("auction-auction-api")
 include("auction-product-api")
 include("auction-seller-api")
 include("auction-bid-api")
 include("auction-order-api")
 include("auction-category-api")
+include("auction-rating-api")

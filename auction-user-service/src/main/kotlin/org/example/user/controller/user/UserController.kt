@@ -9,9 +9,9 @@ import org.example.user.application.user.dto.UserResponse
 import org.example.user.application.user.dto.UserSingupRequest
 import org.example.user.application.user.dto.UserUpdateRequest
 import org.example.user.application.user.dto.UserWithdrawnRequest
-import org.example.user.application.user.dto.WithdrawalStatusResponse
 import org.example.user.application.user.service.UserService
 import org.example.common.global.response.ApiResponse
+import org.example.user.application.user.dto.WithdrawalStatusResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping

@@ -3,7 +3,8 @@ package org.example.auction.application.service.module
 import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import org.example.auction.domain.auction.entity.Auction
-import org.example.auction.domain.auction.error.AuctionErrorCode
+import auction.auctionproductapi.auction.error.AuctionErrorCode
+import auction.auctionproductapi.product.error.ProductErrorCode
 import org.example.auction.domain.auction.repository.AuctionRepository
 import org.example.common.global.error.CustomException
 import org.springframework.data.repository.findByIdOrNull
@@ -22,8 +23,8 @@ class AuctionCommonService(
             ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND)
 
         return AuctionCommonResponse(
-            auctionId = auction.auctionId ?: 0L,
-            productId = auction.product.productId,
+            auctionId = auction.auctionId ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND),
+            productId = auction.product.productId ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND),
             startPrice = auction.startPrice ?: 0L,
             currentPrice = auction.currentPrice ?: 0L,
             status = auction.status?.name,
@@ -36,8 +37,8 @@ class AuctionCommonService(
         val auctions: List<Auction> = auctionRepository.findAllByAuctionIdIn(auctionIds)
         return auctions.map { auction ->
             AuctionCommonResponse(
-                auctionId = auction.auctionId ?: 0L,
-                productId = auction.product.productId,
+                auctionId = auction.auctionId ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND),
+                productId = auction.product.productId ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND),
                 startPrice = auction.startPrice ?: 0L,
                 currentPrice = auction.currentPrice ?: 0L,
                 status = auction.status?.name,

@@ -4,6 +4,7 @@ import auction.auctionsellerapi.status.SellerStatus
 import auction.auctionuserapi.user.client.UserClient
 import auction.auctionuserapi.user.client.UserSellerClient
 import auction.auctionuserapi.user.dto.UserCommonResponse
+import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.Role
 import jakarta.transaction.Transactional
 import org.example.common.global.error.CustomException
@@ -64,7 +65,7 @@ class SellerAdminProcessor(
 
     private fun validateUserProtection(userId: Long) {
         if (PROTECTED_USER_IDS.contains(userId)) {
-            throw CustomException(GlobalErrorCode.PROTECT_DEFAULT_USERS)
+            throw CustomException(UserErrorCode.PROTECT_DEFAULT_USERS)
         }
     }
 

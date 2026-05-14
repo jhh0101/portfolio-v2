@@ -15,7 +15,8 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.example.auction.domain.auction.entity.Auction
-import org.example.global.base.BaseCreatedAt
+import org.example.common.global.base.BaseCreatedAt
+import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDateTime
@@ -61,8 +62,9 @@ class Product(
         fetch = FetchType.LAZY,
         cascade = [CascadeType.REMOVE]
     )
-    val auction: Auction,
+    var auction: Auction?,
 
+    @BatchSize(size = 50)
     @OneToMany(
         mappedBy = "product",
         cascade = [CascadeType.ALL],
@@ -83,7 +85,7 @@ class Product(
         this.title = title
         this.description = description
 
-        this.auction.updateAuction(startPrice, startTime, endTime)
+        this.auction?.updateAuction(startPrice, startTime, endTime)
     }
 
     fun changeStatus(status: ProductStatus) {

@@ -39,7 +39,9 @@ class AuctionScheduler(
         if (expiredAuctionIds != null) {
             for (auctionId in expiredAuctionIds) {
                 try {
-                    auctionService.finishAuction(auctionId)
+                    if (auctionId != null) {
+                        auctionService.finishAuction(auctionId)
+                    }
                 } catch (e: java.lang.Exception) {
                     log.error("경매 종료 처리 중 오류 발생 - ID: {}, 사유: {}", auctionId, e.message)
                 }

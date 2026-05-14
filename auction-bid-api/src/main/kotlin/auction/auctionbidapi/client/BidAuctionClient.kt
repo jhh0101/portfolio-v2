@@ -1,8 +1,7 @@
 package auction.auctionbidapi.client
 
-import auction.auctionbidapi.dto.BidAuctionResponse
-import java.util.Optional
+import auction.auctionbidapi.dto.BidCommonResponse
 
 interface BidAuctionClient {
-    fun findTopByStatusAndAuctionOrderByBidIdDesc(auctionId: Long) : BidAuctionResponse
+    fun findTopByStatusAndAuctionOrderByBidIdDesc(auctionId: Long) : BidCommonResponse
 }

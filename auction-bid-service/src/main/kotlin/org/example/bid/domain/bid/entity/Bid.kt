@@ -11,7 +11,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Index
 import jakarta.persistence.Table
-import org.example.bid.global.base.BaseCreatedAt
+import org.example.common.global.base.BaseCreatedAt
 
 @Entity
 @Table(
@@ -39,7 +39,7 @@ class Bid(
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    var status: BidStatus? = null,
+    var status: BidStatus,
 ) : BaseCreatedAt() {
 
     fun cancelBid() {

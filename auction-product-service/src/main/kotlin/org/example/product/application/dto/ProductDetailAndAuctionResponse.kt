@@ -1,9 +1,11 @@
 package org.example.product.application.dto
 
 import auction.auctioncategoryapi.dto.CategoryCommonResponse
+import auction.auctionproductapi.auction.error.AuctionErrorCode
 import auction.auctionuserapi.user.dto.UserCommonResponse
 import org.example.auction.domain.auction.dto.AuctionResponse
 import org.example.auction.domain.auction.dto.toAuctionResponse
+import org.example.common.global.error.CustomException
 import org.example.product.domain.product.entity.Product
 
 data class ProductDetailAndAuctionResponse(
@@ -13,6 +15,6 @@ data class ProductDetailAndAuctionResponse(
 fun Product.toProductDetailAndAuctionDto(userDto: UserCommonResponse, categoryDto: CategoryCommonResponse) : ProductDetailAndAuctionResponse{
     return ProductDetailAndAuctionResponse(
         productDetailResponse = this.toProductDetailDto(userDto, categoryDto),
-        auctionResponse = this.auction.toAuctionResponse()
+        auctionResponse = this.auction?.toAuctionResponse() ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND)
     )
 }

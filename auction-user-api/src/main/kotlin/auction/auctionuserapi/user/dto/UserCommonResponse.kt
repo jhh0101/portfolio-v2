@@ -6,5 +6,6 @@ data class UserCommonResponse(
     val userNickname: String,
     val userEmail: String,
     val avgRating: Double,
+    val role: String,
 ) {
 }

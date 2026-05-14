@@ -22,7 +22,6 @@ class SellerService(
     private val sellerRepository: SellerRepository,
     private val sellerProcessor: SellerProcessor,
     private val userClient: UserClient,
-    private val userSellerClient: UserSellerClient,
 ) {
 
 

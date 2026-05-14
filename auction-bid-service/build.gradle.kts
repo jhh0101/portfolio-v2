@@ -12,7 +12,6 @@ dependencies {
 
     // interface
     implementation(project(":auction-user-api"))
-    implementation(project(":auction-auction-api"))
     implementation(project(":auction-product-api"))
     implementation(project(":auction-bid-api"))
 

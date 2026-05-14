@@ -8,6 +8,12 @@ plugins {
 
 dependencies {
     implementation(project(":auction-common"))
+
+    // interface
+    implementation(project(":auction-user-api"))
+    implementation(project(":auction-product-api"))
+    implementation(project(":auction-rating-api"))
+    implementation(project(":auction-order-api"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // Redis & Redisson

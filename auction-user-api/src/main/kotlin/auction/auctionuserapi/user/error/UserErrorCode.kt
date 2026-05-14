@@ -15,7 +15,6 @@ enum class UserErrorCode(
     SUSPENDED_USER("USER007", "정지된 사용자입니다"),
     WITHDRAWN_USER("USER008", "탈퇴된 사용자입니다"),
     CANNOT_WITHDRAW_WHILE_TRADING("USER009", "진행 중인 거래가 있습니다"),
+    PROTECT_DEFAULT_USERS("USER010", "기본 사용자는 삭제하거나 비밀번호 변경할 수 없습니다"),
 
-    // Bid
-    NOT_ENOUGH_POINTS("B001", "입찰 내역을 찾을 수 없습니다"),
 }

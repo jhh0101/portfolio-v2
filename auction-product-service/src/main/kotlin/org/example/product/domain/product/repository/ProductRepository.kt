@@ -1,8 +1,10 @@
 package org.example.product.domain.product.repository
 
+import auction.auctionproductapi.auction.status.AuctionStatus
 import jakarta.persistence.QueryHint
 import org.example.product.domain.product.entity.Product
 import auction.auctionproductapi.product.status.ProductStatus
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -16,7 +18,8 @@ import java.util.stream.Stream
 
 @Repository
 interface ProductRepository : JpaRepository<Product, Long> {
-    fun findByCategory_CategoryId(categoryId: Long?): Product
+
+    fun existsByCategoryId(categoryId: Long?) : Boolean
 
     @Query(
         ("SELECT p FROM Product p " +
@@ -38,9 +41,10 @@ interface ProductRepository : JpaRepository<Product, Long> {
     )
     fun productCount(@Param("sellerId") sellerId: Long): Long
 
-    fun findAllBySeller_UserId(userId: Long): List<Product>
+    @EntityGraph(attributePaths = ["auction"])
+    fun findAllBySellerId(userId: Long): List<Product>
 
-    fun deleteAllBySeller_UserId(userId: Long)
+    fun deleteAllBySellerId(userId: Long)
 
     @QueryHints(value = [
             QueryHint(name = "org.hibernate.fetchSize", value = "100"),
@@ -83,7 +87,9 @@ interface ProductRepository : JpaRepository<Product, Long> {
         @Param("auctionStatus") auctionStatus: AuctionStatus
     )
 
-
-
+    @EntityGraph(attributePaths = ["auction"])
     fun findAllByProductIdIn(productIds: List<Long>): List<Product>
+
+    @EntityGraph(attributePaths = ["auction", "images"])
+    fun findWithDetailsById(productId: Long): Product?
 }

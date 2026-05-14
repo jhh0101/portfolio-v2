@@ -1,18 +1,15 @@
 package org.example.product.domain.product.repository
 
-import auction.auctionauctionapi.status.AuctionStatus
 import auction.auctionproductapi.auction.status.AuctionStatus
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
-import org.example.product.domain.auction.entity.QAuction.auction
-import org.example.product.domain.categories.entity.QCategory.category1
 import org.example.product.domain.product.dto.ProductListCondition
 import org.example.product.domain.product.entity.Product
 import auction.auctionproductapi.product.status.ProductStatus
 import org.example.product.domain.product.entity.QProduct.product
-import org.example.product.domain.user.entity.QUser.user
+import org.example.auction.domain.auction.entity.QAuction.auction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -29,17 +26,16 @@ class ProductQueryRepository(
     fun productList(
         userId: Long?,
         condition: ProductListCondition,
+        targetCategoryIds: List<Long>?,
         pageable: Pageable
     ): Page<Product> {
         val content = jpaQueryFactory
             .selectFrom(product)
-            .innerJoin(product.seller, user).fetchJoin()
             .innerJoin(product.auction, auction).fetchJoin()
-            .leftJoin(product.category, category1).fetchJoin()
             .where(
                 isMyAuction(userId),
                 titleContain(condition.title),
-                pathStartWith(condition.path),
+                categoryIdIn(targetCategoryIds),
                 statusFilter(userId),
                 auction.status.eq(AuctionStatus.PROCEEDING),
                 product.productStatus.eq(ProductStatus.ACTIVE)
@@ -49,40 +45,37 @@ class ProductQueryRepository(
             .orderBy(orderSpecifier(condition.sort))
             .fetch()
 
-        val count: JPAQuery<Long?> = jpaQueryFactory
+        val count: JPAQuery<Long> = jpaQueryFactory
             .select(product.count())
             .from(product)
-            .innerJoin(product.seller, user)
             .innerJoin(product.auction, auction)
-            .leftJoin(product.category, category1)
             .where(
                 isMyAuction(userId),
                 titleContain(condition.title),
-                pathStartWith(condition.path),
+                categoryIdIn(targetCategoryIds),
                 statusFilter(userId),
                 auction.status.eq(AuctionStatus.PROCEEDING),
                 product.productStatus.eq(ProductStatus.ACTIVE)
             )
 
-        return PageableExecutionUtils.getPage<Product>(content, pageable, LongSupplier { count.fetchOne() ?: 0L })
+        return PageableExecutionUtils.getPage(content, pageable) { count.fetchOne() ?: 0L }
     }
 
     fun adminProductList(
         userId: Long?,
         condition: ProductListCondition,
+        targetCategoryIds: List<Long>?,
         pageable: Pageable
     ): Slice<Product> {
         val pageSize = pageable.pageSize
 
         val content = jpaQueryFactory
             .selectFrom(product)
-            .innerJoin(product.seller, user).fetchJoin()
             .innerJoin(product.auction, auction).fetchJoin()
-            .leftJoin(product.category, category1).fetchJoin()
             .where(
                 isMyAuction(userId),
                 titleContain(condition.title),
-                pathStartWith(condition.path),
+                categoryIdIn(targetCategoryIds),
                 statusFilter(userId)
             )
             .offset(pageable.offset)
@@ -100,16 +93,17 @@ class ProductQueryRepository(
     }
 
     private fun isMyAuction(userId: Long?): BooleanExpression? {
-        return userId.let { product.seller.userId.eq(it) }
+        return userId.let { product.sellerId.eq(it) }
     }
 
     private fun titleContain(title: String?): BooleanExpression? {
         return if (!title.isNullOrBlank()) product.title.contains(title) else null
     }
 
-    private fun pathStartWith(path: String?): BooleanExpression? {
-        return if (!path.isNullOrBlank()) product.category.path.eq(path)
-            .or(product.category.path.startsWith("$path/")) else null
+    private fun categoryIdIn(targetCategoryIds: List<Long>?): BooleanExpression? {
+        return if (!targetCategoryIds.isNullOrEmpty()) {
+            product.categoryId.`in`(targetCategoryIds)
+        } else null
     }
 
     private fun statusFilter(userId: Long?): BooleanExpression? {

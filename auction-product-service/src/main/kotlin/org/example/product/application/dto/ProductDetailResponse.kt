@@ -4,7 +4,6 @@ import auction.auctioncategoryapi.dto.CategoryCommonResponse
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.example.product.domain.product.entity.Product
 import auction.auctionproductapi.product.status.ProductStatus
-import auction.auctionuserapi.user.client.UserClient
 import auction.auctionuserapi.user.dto.UserCommonResponse
 import java.time.LocalDateTime
 

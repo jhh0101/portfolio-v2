@@ -27,7 +27,7 @@ class BidController(
     private val bidService: BidService
 ) {
 
-
+    // User
     @PostMapping("/{auctionId}")
     fun addBid(
         @Valid @RequestBody request: BidRequest,
@@ -66,7 +66,7 @@ class BidController(
         @PageableDefault(size = 5) pageable: Pageable
     ): ResponseEntity<ApiResponse<Page<BidHistoryResponse>>> {
         val responses: Page<BidHistoryResponse> =
-            bidService.findBidHistory(user.id, pageable)
+            bidService.findBidHistoryPage(user.id, pageable)
         return ResponseEntity.ok(ApiResponse.success("입찰 상품 리스트 출력", responses))
     }
 }

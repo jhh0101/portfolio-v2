@@ -1,5 +1,6 @@
 package org.example.user.application.user.service
 
+import auction.auctionbidapi.client.BidClient
 import auction.auctionproductapi.product.client.ProductClient
 import auction.auctionsellerapi.client.SellerClient
 import auction.auctionsellerapi.status.SellerStatus
@@ -17,11 +18,11 @@ import org.example.user.application.user.dto.toDeleteDto
 import org.example.user.application.user.dto.toDto
 import org.example.user.application.user.dto.toProfileDto
 import org.example.user.application.user.dto.toUpdateCommand
-import org.example.user.application.user.dto.toWithdrawalStatusDto
 import auction.auctionuserapi.user.type.Role
 import org.example.user.domain.user.entity.User
 import auction.auctionuserapi.user.type.UserStatus
 import auction.auctionuserapi.user.error.UserErrorCode
+import org.example.user.application.user.dto.toWithdrawalStatusDto
 import org.example.user.domain.user.repository.UserRepository
 import org.example.user.domain.user.service.UserProcessor
 import org.slf4j.LoggerFactory
@@ -36,12 +37,12 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional(readOnly = true)
 class UserService(
-    private val bidService: BidCommonService,
     private val productClient: ProductClient,
     private val sellerClient: SellerClient,
     private val passwordEncoder: PasswordEncoder,
     private val userProcessor: UserProcessor,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val bidClient: BidClient,
 ) : UserDetailsService {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -84,7 +85,7 @@ class UserService(
 
         val matchesPassword: Boolean = passwordEncoder.matches(request.password, user.password)
 
-        val bidCount = bidService.bidCount(userId)
+        val bidCount = bidClient.bidCount(userId)
         val productCount = productClient.productCount(userId)
 
         userProcessor.validateWithdrawn(matchesPassword, user, bidCount, productCount)
@@ -133,7 +134,7 @@ class UserService(
         val user = userRepository.findByIdOrNull(userId)
             ?: throw CustomException(UserErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.")
 
-        val bidCount = bidService.bidCount(userId)
+        val bidCount = bidClient.bidCount(userId)
         val productCount = productClient.productCount(userId)
 
         return user.toWithdrawalStatusDto(bidCount, productCount)

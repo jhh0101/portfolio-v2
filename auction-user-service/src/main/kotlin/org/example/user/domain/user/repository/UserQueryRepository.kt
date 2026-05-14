@@ -1,17 +1,17 @@
 package org.example.user.domain.user.repository
 
-import com.querydsl.core.types.dsl.BooleanExpression
-import com.querydsl.jpa.impl.JPAQueryFactory
 import org.example.user.domain.user.dto.UserSearchCondition
 import auction.auctionuserapi.user.type.Role
 import org.example.user.domain.user.entity.User
 import auction.auctionuserapi.user.type.UserStatus
+import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.jpa.impl.JPAQueryFactory
+import org.example.user.domain.user.entity.QUser.user
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
 
-import org.example.user.domain.user.entity.QUser.user
 
 @Repository
 class UserQueryRepository(

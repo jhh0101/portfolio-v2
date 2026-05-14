@@ -15,14 +15,17 @@ import org.example.bid.domain.bid.dto.BidInfoResponse
 import org.example.bid.domain.bid.dto.toDto
 import org.example.bid.domain.bid.entity.Bid
 import auction.auctionbidapi.status.BidStatus
-import org.example.bid.domain.bid.error.BidErrorCode
+import auction.auctionbidapi.error.BidErrorCode
 import org.example.bid.domain.bid.repository.BidQueryRepository
 import org.example.bid.domain.bid.repository.BidRepository
 import org.example.bid.domain.bid.service.BidProcessor
 import org.example.common.global.error.CustomException
+import auction.auctionproductapi.product.error.ProductErrorCode
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
+import org.springframework.data.domain.SliceImpl
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -30,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class BidService(
     private val bidRepository: BidRepository,
-    private val bidQueryRepository: BidQueryRepository,
     private val userCommonClient: UserClient,
     private val auctionClient: AuctionClient,
     private val auctionBidClient: AuctionBidClient,
@@ -63,14 +65,16 @@ class BidService(
 
     @Transactional(readOnly = true)
     fun findBid(auctionId: Long, pageable: Pageable): Page<BidInfoResponse> {
-        return bidRepository.findAllByAuctionId(auctionId, pageable).map { it.toDto() }
+
+        return bidRepository.findAllByAuctionId(auctionId, pageable).map { it.toDto(userCommonClient.userModuleDto(it.bidderId)) }
     }
 
     @Transactional(readOnly = true)
-    fun findBidHistory(userId: Long, pageable: Pageable): Page<BidHistoryResponse> {
-        val bidPage: Page<Bid> = bidRepository.findAllByBidderId(userId, pageable)
+    fun findBidHistoryPage(userId: Long, pageable: Pageable): Page<BidHistoryResponse> {
+        val bidPage: Page<Bid> = bidRepository.findPageByBidderId(userId, pageable)
 
         val auctionIds: List<Long> = bidPage.content.map { it.auctionId }
+
         val auctions: List<AuctionCommonResponse> = auctionClient.auctionListModuleDto(auctionIds)
         val auctionMap: Map<Long, AuctionCommonResponse> = auctions.associateBy { it.auctionId }
 
@@ -95,7 +99,9 @@ class BidService(
     @Transactional
     fun cancelBid(userId: Long, bidId: Long, auctionId: Long): BidResultResponse {
         val auctionDto = auctionBidClient.auctionLockModuleDto(auctionId)
+
         val productDto = productClient.productModuleDto(auctionDto.productId)
+
         val userDto = userCommonClient.userModuleDto(userId)
 
         val bid: Bid = bidRepository.findByIdOrNull(bidId)

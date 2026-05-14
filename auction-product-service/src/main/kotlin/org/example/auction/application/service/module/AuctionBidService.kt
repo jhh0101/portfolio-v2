@@ -4,7 +4,8 @@ import auction.auctionproductapi.auction.client.AuctionBidClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.auction.status.AuctionStatus
 import org.example.auction.domain.auction.entity.Auction
-import org.example.auction.domain.auction.error.AuctionErrorCode
+import auction.auctionproductapi.auction.error.AuctionErrorCode
+import auction.auctionproductapi.product.error.ProductErrorCode
 import org.example.auction.domain.auction.repository.AuctionRepository
 import org.example.common.global.error.CustomException
 import org.springframework.stereotype.Service
@@ -21,8 +22,8 @@ class AuctionBidService(
         auction.validateBiddingTime()
 
         return AuctionCommonResponse(
-            auctionId = auction.auctionId ?: 0L,
-            productId = auction.product.productId,
+            auctionId = auction.auctionId ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND),
+            productId = auction.product.productId ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND),
             startPrice = auction.startPrice ?: 0L,
             currentPrice = auction.currentPrice ?: 0L,
             status = auction.status?.name,

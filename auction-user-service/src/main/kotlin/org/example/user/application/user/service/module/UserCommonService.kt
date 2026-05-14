@@ -24,7 +24,23 @@ class UserCommonService(
             userNickname = user.nickname,
             userEmail = user.email,
             avgRating = user.avgRating,
+            role = user.role.name,
         )
+    }
+
+    override fun userListModuleDto(userIds: List<Long>) : List<UserCommonResponse> {
+        val users: List<User> = userRepository.findAllByUserIdIn(userIds)
+
+        return users.map { user ->
+            UserCommonResponse(
+                userId = user.userId ?: 0L,
+                userPoint = user.point,
+                userNickname = user.nickname,
+                userEmail = user.email,
+                avgRating = user.avgRating,
+                role = user.role.name,
+            )
+        }
     }
     override fun getUsersByIds(userIds: List<Long>) : Map<Long, UserCommonResponse> {
         val users: List<User> = userRepository.findAllByUserIdIn(userIds)
@@ -39,6 +55,7 @@ class UserCommonService(
                 userEmail = user.email,
                 userNickname = user.nickname,
                 avgRating = user.avgRating,
+                role = user.role.name,
             )
         }
     }

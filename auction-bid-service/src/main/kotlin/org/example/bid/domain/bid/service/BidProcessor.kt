@@ -9,7 +9,7 @@ import auction.auctionuserapi.user.client.UserClient
 import auction.auctionuserapi.user.dto.UserCommonResponse
 import org.example.bid.domain.bid.entity.Bid
 import auction.auctionbidapi.status.BidStatus
-import org.example.bid.domain.bid.error.BidErrorCode
+import auction.auctionbidapi.error.BidErrorCode
 import org.example.common.global.error.CustomException
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime

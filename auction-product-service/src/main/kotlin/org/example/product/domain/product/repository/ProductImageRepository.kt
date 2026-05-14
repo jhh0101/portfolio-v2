@@ -19,7 +19,7 @@ interface ProductImageRepository : JpaRepository<ProductImage, Long> {
                 "AND p.imageOrder < :oldOrder")
     )
     fun shiftOrders(
-        @Param("productId") productId: Long,
+        @Param("productId") productId: Long?,
         @Param("newOrder") newOrder: Int,
         @Param("oldOrder") oldOrder: Int
     )

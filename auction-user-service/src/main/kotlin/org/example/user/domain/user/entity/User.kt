@@ -1,5 +1,6 @@
 package org.example.user.domain.user.entity
 
+import auction.auctionbidapi.error.BidErrorCode
 import auction.auctionuserapi.user.type.Role
 import auction.auctionuserapi.user.type.UserStatus
 import jakarta.persistence.*
@@ -59,7 +60,7 @@ class User(
 
     fun subPoint(point: Long) {
         if (this.point < point) {
-            throw CustomException(UserErrorCode.NOT_ENOUGH_POINTS)
+            throw CustomException(BidErrorCode.NOT_ENOUGH_POINTS)
         }
         this.point -= point
     }

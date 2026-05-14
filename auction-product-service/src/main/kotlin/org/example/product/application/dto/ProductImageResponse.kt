@@ -11,7 +11,7 @@ data class ProductImageResponse(
 fun ProductImage.toProductImageDto() : ProductImageResponse{
     return ProductImageResponse(
         imageId = this.imageId ?: 0L,
-        productId = this.product?.productId ?: 0L,
+        productId = this.product.productId ?: 0L,
         imageUrl = this.imageUrl,
         imageOrder = this.imageOrder
     )

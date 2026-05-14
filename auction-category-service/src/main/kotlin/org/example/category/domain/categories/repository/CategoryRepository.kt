@@ -20,4 +20,6 @@ interface CategoryRepository : JpaRepository<Category, Long> {
     )
     fun updatePathPrefix(@Param("oldPrefix") oldPrefix: String,
                          @Param("newPrefix") newPrefix: String)
+
+    fun findByCategoryIdIn(categoryIds: List<Long>?): List<Category>
 }

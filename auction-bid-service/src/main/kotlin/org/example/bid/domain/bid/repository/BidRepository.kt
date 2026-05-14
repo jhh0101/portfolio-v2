@@ -66,21 +66,7 @@ interface BidRepository : JpaRepository<Bid, Long> {
     )
     fun bidCount(@Param("bidderId") bidderId: Long): Long
 
-    @Query(
-        value = ("SELECT b.bidId AS bidId, " +
-                "b.auctionId AS auctionId, " +
-                "u.nickname AS nickname, " +
-                "b.bidPrice AS bidPrice, " +
-                "b.createdAt AS createdAt, " +
-                "b.status AS status " +
-                "FROM Bid b " +
-                "LEFT JOIN User u ON b.bidderId = u.userId " +
-                "WHERE b.auctionId = :auctionId " +
-                "AND b.status = 'ACTIVE'"),
-        countQuery = "SELECT COUNT(*) FROM Bid b WHERE b.auctionId = :auctionId AND b.status = 'ACTIVE'"
-    )
-    fun findAllByAuctionId(
-        @Param("auctionId") auctionId: Long, pageable: Pageable): Page<BidInfo>
+    fun findAllByAuctionId(auctionId: Long, pageable: Pageable): Page<Bid>
 
     @Query(
         value = ("SELECT b.bid_id AS bidId, " +
@@ -100,5 +86,12 @@ interface BidRepository : JpaRepository<Bid, Long> {
         pageable: Pageable
     ): Slice<BidInfo>
 
-    fun findAllByBidderId(bidderId: Long, pageable: Pageable): Page<Bid>
+    fun findPageByBidderId(bidderId: Long, pageable: Pageable): Page<Bid>
+    fun findSliceByBidderId(bidderId: Long, pageable: Pageable): Slice<Bid>
+
+    fun findSliceByAuctionIdAndBidderIdOrderByCreatedAtDesc(
+        auctionId: Long,
+        bidderId: Long,
+        pageable: Pageable
+    ): Slice<Bid>
 }

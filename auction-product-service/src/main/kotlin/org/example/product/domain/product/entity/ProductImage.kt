@@ -24,7 +24,7 @@ class ProductImage(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    val product: Product? = null,
+    val product: Product,
 
     @Column(name = "image_url")
     var imageUrl: String,

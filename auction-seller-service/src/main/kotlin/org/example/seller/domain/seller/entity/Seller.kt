@@ -11,8 +11,8 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.example.common.global.base.BaseCreatedAt
 import org.example.seller.application.dto.SellerApplyRequest
-import org.example.seller.global.base.BaseCreatedAt
 
 @Entity
 @Table(name = "sellers")
