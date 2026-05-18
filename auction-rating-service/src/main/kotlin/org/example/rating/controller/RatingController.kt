@@ -73,7 +73,7 @@ class RatingController(
         @PathVariable toUserId: Long,
         @PageableDefault(
             size = 10,
-            sort = ["order.orderId"],
+            sort = ["orderId"],
             direction = Sort.Direction.ASC
         ) pageable: Pageable
     ): ResponseEntity<ApiResponse<Page<RatingResponse>>> {

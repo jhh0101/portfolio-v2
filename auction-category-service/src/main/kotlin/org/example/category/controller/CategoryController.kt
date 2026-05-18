@@ -29,7 +29,7 @@ class CategoryController(
     }
 
     @GetMapping
-    fun searchCategory(@RequestParam(required = false) parentId: Long): ResponseEntity<ApiResponse<List<CategoryResponse>>> {
+    fun searchCategory(@RequestParam(required = false) parentId: Long?): ResponseEntity<ApiResponse<List<CategoryResponse>>> {
         val response: List<CategoryResponse> = categoryService.searchCategory(parentId)
         return ResponseEntity.ok(ApiResponse.success("카테고리 조회", response))
     }

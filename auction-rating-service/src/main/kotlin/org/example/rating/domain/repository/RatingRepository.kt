@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository
 interface RatingRepository : JpaRepository<Rating, Long> {
     fun existsByOrderId(orderId: Long): Boolean
 
-    @EntityGraph(attributePaths = ["toUserId", "fromUserId", "orderId"])
     fun findAllByToUserId(toUserUserId: Long, pageable: Pageable): Page<Rating>
 
     fun findByOrderId(orderId: Long): Rating?

@@ -9,8 +9,8 @@ import org.hibernate.annotations.SQLRestriction
     name = "categories",
     indexes = [Index(name = "idx_category_parent", columnList = "parent_id")]
 )
-@SQLDelete(sql = "UPDATE categories SET is_deleted = true WHERE category_id = ?")
-@SQLRestriction("is_deleted = false")
+@SQLDelete(sql = "UPDATE categories SET is_deleted = 'true' WHERE category_id = ?")
+@SQLRestriction("is_deleted = 'false'")
 class Category(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

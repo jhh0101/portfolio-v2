@@ -54,8 +54,8 @@ class ProductController(
     fun productList(
         condition: ProductListCondition,
         @PageableDefault(size = 9) pageable: Pageable
-    ): ResponseEntity<ApiResponse<org.springframework.data.domain.Page<ProductAndAuctionResponse>>> {
-        val responses: org.springframework.data.domain.Page<ProductAndAuctionResponse> =
+    ): ResponseEntity<ApiResponse<Page<ProductAndAuctionResponse>>> {
+        val responses: Page<ProductAndAuctionResponse> =
             productService.productList(condition, pageable)
         return ResponseEntity.ok(ApiResponse.success("상품 리스트 조회", responses))
     }
@@ -66,9 +66,9 @@ class ProductController(
         @PathVariable productId: Long,
         @CookieValue(name = "viewedProducts", defaultValue = "") viewedCookieValue: String,
         response: HttpServletResponse,
-        @LoginUser userId: Long
+        @LoginUser user: DetailsUser?
     ): ResponseEntity<ApiResponse<ProductDetailResult>> {
-        val result = productService.findProductDetail(productId, userId, viewedCookieValue)
+        val result = productService.findProductDetail(productId, user?.id, viewedCookieValue)
 
         val cookie = Cookie("viewedProducts", result.newCookieValue).apply {
             maxAge = 60 * 60 * 24 // 쿠키 유지 시간 설정 (예: 24시간)

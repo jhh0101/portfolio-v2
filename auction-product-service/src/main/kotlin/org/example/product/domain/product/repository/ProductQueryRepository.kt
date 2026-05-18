@@ -93,7 +93,7 @@ class ProductQueryRepository(
     }
 
     private fun isMyAuction(userId: Long?): BooleanExpression? {
-        return userId.let { product.sellerId.eq(it) }
+        return userId?.let { product.sellerId.eq(it) }
     }
 
     private fun titleContain(title: String?): BooleanExpression? {

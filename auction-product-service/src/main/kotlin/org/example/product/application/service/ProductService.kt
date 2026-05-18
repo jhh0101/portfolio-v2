@@ -120,9 +120,10 @@ class ProductService(
 
     }
 
+    @Transactional
     fun findProductDetail(
         productId: Long,
-        userId: Long,
+        userId: Long?,
         viewedCookieValue: String // Request 안 받음!
     ): ProductDetailResult { // 응답용 DTO를 하나 만듭니다 (기존 응답 + 새 쿠키값)
 

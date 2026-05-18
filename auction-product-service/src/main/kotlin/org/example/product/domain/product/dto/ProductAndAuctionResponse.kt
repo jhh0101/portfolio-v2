@@ -10,8 +10,8 @@ import org.example.product.domain.product.entity.Product
 
 
 data class ProductAndAuctionResponse(
-    private val productResponse: ProductResponse,
-    private val auctionResponse: AuctionResponse
+    val productResponse: ProductResponse,
+    val auctionResponse: AuctionResponse
 )
 
 fun Product.toProductAndAuctionDto(userDto: UserCommonResponse?, categoryDto: CategoryCommonResponse?): ProductAndAuctionResponse {
