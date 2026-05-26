@@ -25,7 +25,7 @@ class ProductDetailService(
         val userDto = userClient.userModuleDto(product.sellerId)
         val categoryDto = categoryClient.categoryModuleDto(product.categoryId)
 
-        val mainUrl: String = product.image.stream()
+        val mainUrl: String = product.images.stream()
             .filter({ img -> img.imageOrder == 1 })
             .map(ProductImage::imageUrl)
             .findFirst()
@@ -60,7 +60,7 @@ class ProductDetailService(
             val categoryDto = categoryMap[product.categoryId]
                 ?: throw CustomException(CategoryErrorCode.CATEGORY_NOT_FOUND)
 
-            val mainUrl = product.image
+            val mainUrl = product.images
                 .firstOrNull { it.imageOrder == 1 }?.imageUrl
                 ?: "https://picsum.photos/400/300"
 

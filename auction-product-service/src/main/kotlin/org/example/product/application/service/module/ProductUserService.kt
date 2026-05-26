@@ -1,7 +1,6 @@
 package org.example.product.application.service.module
 
 import auction.auctionproductapi.auction.error.AuctionErrorCode
-import auction.auctionproductapi.product.client.ProductCategoryClient
 import auction.auctionproductapi.product.client.ProductUserClient
 import auction.auctionproductapi.product.dto.ProductCommonResponse
 import auction.auctionproductapi.product.error.ProductErrorCode
@@ -21,7 +20,7 @@ class ProductUserService(
 
         return products.map { product ->
             val auction = checkNotNull(product.auction) { "상품에 연결된 경매 정보가 없습니다. (ID: ${product.productId})" }
-            val images = checkNotNull(product.image) { "상품에 연결된 이미지 정보가 없습니다. (ID: ${product.productId})" }
+            val images = checkNotNull(product.images) { "상품에 연결된 이미지 정보가 없습니다. (ID: ${product.productId})" }
             ProductCommonResponse(
                 productId = product.productId ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND, "상품ID를 찾을 수 없습니다."),
                 productSellerId = product.sellerId,

@@ -24,7 +24,7 @@ class ProductUserCommandService(
         val auctionIds: MutableList<Long> = ArrayList()
 
         for (product in productList) {
-            for (img in product.image) {
+            for (img in product.images) {
                 allImageUrls.add(img.imageUrl)
             }
             auctionIds.add(product.auction?.auctionId ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND))

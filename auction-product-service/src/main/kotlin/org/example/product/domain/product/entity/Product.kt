@@ -70,7 +70,7 @@ class Product(
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
-    val image: MutableList<ProductImage> = mutableListOf()
+    val images: MutableList<ProductImage> = mutableListOf()
 ) : BaseCreatedAt() {
 
     fun updateProduct(

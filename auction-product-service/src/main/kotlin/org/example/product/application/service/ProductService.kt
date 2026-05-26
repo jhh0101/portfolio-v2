@@ -63,7 +63,7 @@ class ProductService(
             description = productRequest.description,
             viewCount = 0,
             productStatus = ProductStatus.ACTIVE,
-            image = mutableListOf(),
+            images = mutableListOf(),
             auction = null
         )
 
@@ -230,7 +230,7 @@ class ProductService(
         if (bidClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
             throw CustomException(ProductErrorCode.CANNOT_MODIFY_AFTER_BID, "입찰한 상품은 수정할 수 없습니다.")
         }
-        for (img in product.image) {
+        for (img in product.images) {
             s3Service.deleteFile(img.imageUrl)
         }
 

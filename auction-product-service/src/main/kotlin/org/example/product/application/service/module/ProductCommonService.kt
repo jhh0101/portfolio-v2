@@ -21,7 +21,7 @@ class ProductCommonService(
             ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND)
 
         val auction = checkNotNull(product.auction) { "상품에 연결된 경매 정보가 없습니다. (ID: $productId)" }
-        val images = checkNotNull(product.image) { "상품에 연결된 이미지 정보가 없습니다. (ID: $productId)" }
+        val images = checkNotNull(product.images) { "상품에 연결된 이미지 정보가 없습니다. (ID: $productId)" }
 
         return ProductCommonResponse(
             productId = product.productId ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND, "상품ID를 찾을 수 없습니다."),
@@ -46,7 +46,7 @@ class ProductCommonService(
 
         return products.map { product ->
             val auction = product.auction ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND, "상품과 연결된 경매 정보를 찾을 수 없습니다.")
-            val images = product.image
+            val images = product.images
             ProductCommonResponse(
                 productId = product.productId ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND, "상품ID를 찾을 수 없습니다."),
                 productSellerId = product.sellerId,

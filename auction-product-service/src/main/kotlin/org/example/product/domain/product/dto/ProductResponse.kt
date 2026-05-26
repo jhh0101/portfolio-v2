@@ -21,7 +21,7 @@ data class ProductResponse(
 
 fun Product.toProductResponse(userDto: UserCommonResponse?, categoryDto: CategoryCommonResponse?): ProductResponse {
 
-    val mainUrl = this.image
+    val mainUrl = this.images
         .firstOrNull { it.imageOrder == 1 }
         ?.imageUrl ?: "https://picsum.photos/400/300"
 
