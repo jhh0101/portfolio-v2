@@ -66,7 +66,7 @@ class BidService(
     @Transactional(readOnly = true)
     fun findBid(auctionId: Long, pageable: Pageable): Page<BidInfoResponse> {
 
-        return bidRepository.findAllByAuctionId(auctionId, pageable).map { it.toDto(userCommonClient.userModuleDto(it.bidderId)) }
+        return bidRepository.findAllByAuctionIdAndStatus(auctionId, BidStatus.ACTIVE, pageable).map { it.toDto(userCommonClient.userModuleDto(it.bidderId)) }
     }
 
     @Transactional(readOnly = true)

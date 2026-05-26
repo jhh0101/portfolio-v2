@@ -47,7 +47,7 @@ class UserAdminController(
 
     @GetMapping("/suspension-reason/{userId}")
     fun suspensionReason(@PathVariable userId: Long): ResponseEntity<ApiResponse<UserSuspendReasonResponse>> {
-        val response: UserSuspendReasonResponse = userAdminService.suspendReason(userId)
+        val response: UserSuspendReasonResponse? = userAdminService.suspendReason(userId)
         return ResponseEntity.ok(ApiResponse.success("정지 회원의 정지 사유 조회", response))
     }
 }

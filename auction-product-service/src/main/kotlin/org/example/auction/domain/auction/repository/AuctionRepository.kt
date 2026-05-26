@@ -40,6 +40,7 @@ interface AuctionRepository : JpaRepository<Auction, Long> {
 
     fun findAllByAuctionIdIn(auctionIds: List<Long>): List<Auction>
 
+    @Query("SELECT a.auctionId FROM Auction a WHERE a.status = :status") // a 대신 a.id
     fun findAuctionIdsByStatus(status: AuctionStatus): List<Long>
 
 }

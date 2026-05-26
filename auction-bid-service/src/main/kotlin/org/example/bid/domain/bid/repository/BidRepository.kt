@@ -1,9 +1,7 @@
 package org.example.bid.domain.bid.repository
 
-import org.example.bid.domain.bid.dto.BidInfo
-import org.example.bid.domain.bid.entity.Bid
 import auction.auctionbidapi.status.BidStatus
-import auction.auctionproductapi.auction.status.AuctionStatus
+import org.example.bid.domain.bid.entity.Bid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -61,7 +59,7 @@ interface BidRepository : JpaRepository<Bid, Long> {
         @Param("auctionIds") auctionIds: List<Long>
     ): Long
 
-    fun findAllByAuctionId(auctionId: Long, pageable: Pageable): Page<Bid>
+    fun findAllByAuctionIdAndStatus(auctionId: Long, status: BidStatus, pageable: Pageable): Page<Bid>
 
     fun findPageByBidderId(bidderId: Long, pageable: Pageable): Page<Bid>
     fun findSliceByBidderId(bidderId: Long, pageable: Pageable): Slice<Bid>
@@ -71,4 +69,6 @@ interface BidRepository : JpaRepository<Bid, Long> {
         bidderId: Long,
         pageable: Pageable
     ): Slice<Bid>
+
+    fun existsByStatusAndAuctionId(status: BidStatus, auction: Long): Boolean
 }

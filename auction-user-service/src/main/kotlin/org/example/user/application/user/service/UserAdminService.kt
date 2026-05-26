@@ -3,6 +3,7 @@ package org.example.user.application.user.service
 import auction.auctionbidapi.command.BidUserCommandClient
 import auction.auctionproductapi.product.command.ProductUserCommandClient
 import auction.auctionuserapi.user.error.UserErrorCode
+import auction.auctionuserapi.user.type.UserStatus
 import org.example.common.global.error.CustomException
 import org.example.user.application.auth.service.RefreshTokenService
 import org.example.user.application.user.dto.UserDeleteResponse
@@ -64,9 +65,13 @@ class UserAdminService(
     }
 
     @Transactional(readOnly = true)
-    fun suspendReason(userId: Long): UserSuspendReasonResponse {
+    fun suspendReason(userId: Long): UserSuspendReasonResponse? {
         val user = userRepository.findByIdOrNull(userId)
             ?: throw CustomException(UserErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.")
+
+        if (user.status != UserStatus.SUSPENDED) {
+            return UserSuspendReasonResponse(suspendReason = "해당 회원은 정지 상태가 아닙니다.")
+        }
 
         return user.toSuspendReasonDto()
     }

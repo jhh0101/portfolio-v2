@@ -3,8 +3,10 @@ package org.example.bid.application.service.module
 import auction.auctionbidapi.client.BidClient
 import auction.auctionbidapi.status.BidStatus
 import auction.auctionproductapi.auction.client.AuctionClient
+import auction.auctionproductapi.auction.error.AuctionErrorCode
 import auction.auctionproductapi.auction.status.AuctionStatus
 import org.example.bid.domain.bid.repository.BidRepository
+import org.example.common.global.error.CustomException
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,8 +22,8 @@ class BidCommonService(
 
     override fun existsByStatusAndAuction(
         bidStatus: BidStatus,
-        auction: Long?
+        auctionId: Long?
     ): Boolean {
-        TODO("Not yet implemented")
+        return bidRepository.existsByStatusAndAuctionId(bidStatus, checkNotNull(auctionId) {"경매 정보를 찾을 수 없습니다."})
     }
 }
