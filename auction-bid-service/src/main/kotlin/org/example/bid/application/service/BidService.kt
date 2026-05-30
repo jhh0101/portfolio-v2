@@ -16,16 +16,12 @@ import org.example.bid.domain.bid.dto.toDto
 import org.example.bid.domain.bid.entity.Bid
 import auction.auctionbidapi.status.BidStatus
 import auction.auctionbidapi.error.BidErrorCode
-import org.example.bid.domain.bid.repository.BidQueryRepository
 import org.example.bid.domain.bid.repository.BidRepository
 import org.example.bid.domain.bid.service.BidProcessor
 import org.example.common.global.error.CustomException
-import auction.auctionproductapi.product.error.ProductErrorCode
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
-import org.springframework.data.domain.SliceImpl
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -87,8 +83,8 @@ class BidService(
             val product = productMap[auction.productId] ?: throw CustomException(BidErrorCode.PRODUCT_NOT_FOUND)
 
             BidHistoryResponse(
-                auctionDto = auction,
-                productDto = product,
+                auctionResponse = auction,
+                productResponse = product,
                 myMaxBidPrice = bid.bidPrice
             )
         }

@@ -3,9 +3,9 @@ package org.example.bid.domain.bid.dto
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.product.dto.ProductCommonResponse
 
-class BidHistoryResponse(
-    val productDto: ProductCommonResponse? = null,
-    val auctionDto: AuctionCommonResponse? = null,
+data class BidHistoryResponse(
+    val productResponse: ProductCommonResponse,
+    val auctionResponse: AuctionCommonResponse,
     val myMaxBidPrice: Long? = null
 ) {
 

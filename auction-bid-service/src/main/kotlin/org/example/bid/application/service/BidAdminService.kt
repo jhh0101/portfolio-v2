@@ -1,7 +1,6 @@
 package org.example.bid.application.service
 
 import auction.auctionbidapi.error.BidErrorCode
-import auction.auctionproductapi.auction.client.AuctionBidClient
 import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.product.client.ProductClient
@@ -10,9 +9,7 @@ import auction.auctionuserapi.user.client.UserClient
 import org.example.bid.application.dto.BidResponse
 import org.example.bid.domain.bid.dto.BidHistoryResponse
 import org.example.bid.domain.bid.entity.Bid
-import org.example.bid.domain.bid.repository.BidQueryRepository
 import org.example.bid.domain.bid.repository.BidRepository
-import org.example.bid.domain.bid.service.BidProcessor
 import org.example.common.global.error.CustomException
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -45,8 +42,8 @@ class BidAdminService(
             val product = productMap[auction.productId] ?: throw CustomException(BidErrorCode.PRODUCT_NOT_FOUND)
 
             BidHistoryResponse(
-                auctionDto = auction,
-                productDto = product,
+                auctionResponse = auction,
+                productResponse = product,
                 myMaxBidPrice = bid.bidPrice
             )
         }
