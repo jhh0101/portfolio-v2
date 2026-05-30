@@ -33,15 +33,9 @@ import org.springframework.web.multipart.MultipartFile
 
 @Service
 class ProductAdminService(
-    private val productImageRepository: ProductImageRepository,
-    private val productRepository: ProductRepository,
     private val productQueryRepository: ProductQueryRepository,
     private val userClient: UserClient,
-    private val categoryClient: CategoryClient,
     private val categoryProductClient: CategoryProductClient,
-    private val bidClient: BidClient,
-    private val s3Service: S3Service,
-    private val redissonClient: RedissonClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 

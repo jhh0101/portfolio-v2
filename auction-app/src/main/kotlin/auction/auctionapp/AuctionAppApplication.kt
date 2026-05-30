@@ -6,7 +6,7 @@ import org.springframework.boot.runApplication
 @SpringBootApplication(
     scanBasePackages = [
         "auction.auctionapp",
-        "org.example"
+        "org.example",
     ]
 )
 class AuctionAppApplication

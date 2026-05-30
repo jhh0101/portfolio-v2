@@ -16,14 +16,16 @@ dependencies {
     implementation(project(":auction-order-api"))
     implementation(project(":auction-category-api"))
 
+    // redis
+    implementation(project(":auction-redis"))
+
+    // S3
+    implementation(project(":auction-s3"))
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-
-    // Redis & Redisson
-    implementation("org.redisson:redisson:3.42.0")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // Querydsl
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")

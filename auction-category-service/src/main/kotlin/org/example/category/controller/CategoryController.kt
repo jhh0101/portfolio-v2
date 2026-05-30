@@ -6,6 +6,7 @@ import org.example.category.application.dto.CategoryResponse
 import org.example.category.application.service.CategoryService
 import org.example.common.global.response.ApiResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 class CategoryController(
     private val categoryService: CategoryService
 ) {
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     fun addCategory(@RequestBody request: @Valid CategoryRequest): ResponseEntity<ApiResponse<CategoryResponse>> {
         val response: CategoryResponse = categoryService.addCategory(request)
@@ -34,6 +35,7 @@ class CategoryController(
         return ResponseEntity.ok(ApiResponse.success("카테고리 조회", response))
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     fun updateCategory(
         @PathVariable id: Long,
@@ -43,6 +45,7 @@ class CategoryController(
         return ResponseEntity.ok(ApiResponse.success("카테고리 수정", response))
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     fun deleteCategory(@PathVariable id: Long): ResponseEntity<ApiResponse<Void>> {
         categoryService.deleteCategory(id)
