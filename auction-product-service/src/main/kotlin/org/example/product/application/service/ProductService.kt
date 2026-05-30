@@ -18,13 +18,12 @@ import org.example.product.domain.product.dto.*
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.entity.ProductImage
 import auction.auctionproductapi.product.error.ProductErrorCode
-import org.example.common.global.s3.service.S3Service
+import org.example.auction.s3.service.S3Service
 import org.example.product.domain.product.repository.ProductImageRepository
 import org.example.product.domain.product.repository.ProductQueryRepository
 import org.example.product.domain.product.repository.ProductRepository
 import org.example.product.domain.product.service.ProductProcessor
 import org.example.redis.zset.RedisZSetHelper
-import org.redisson.api.RScoredSortedSet
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
