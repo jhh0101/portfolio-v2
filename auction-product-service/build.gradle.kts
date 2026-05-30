@@ -19,6 +19,9 @@ dependencies {
     // redis
     implementation(project(":auction-redis"))
 
+    // S3
+    implementation(project(":auction-s3"))
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     implementation("org.springframework.boot:spring-boot-starter-validation")
