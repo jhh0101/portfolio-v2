@@ -11,7 +11,7 @@ import org.example.common.global.auth.service.JwtService
 import org.example.user.domain.user.processor.AuthProcessor
 import org.example.user.domain.user.repository.UserRepository
 import org.example.common.global.config.JwtProperties
-import org.springframework.data.redis.core.RedisTemplate
+import org.example.redis.value.RedisTemplateHelper
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.LockedException
@@ -28,7 +28,7 @@ class AuthService(
     private val userRepository: UserRepository,
     private val refreshTokenService: RefreshTokenService,
     private val authenticationManager: AuthenticationManager,
-    private val redisTemplate: RedisTemplate<String, String>,
+    private val redisTemplateHelper: RedisTemplateHelper,
 ) {
 
 
@@ -71,7 +71,7 @@ class AuthService(
         val userId = refreshTokenService.getUserIdByToken(refreshToken)
                 ?: throw CustomException(GlobalErrorCode.TOKEN_NOT_FOUND)
 
-        val redisRefreshToken = redisTemplate.opsForValue().get("refresh:user:$userId")
+        val redisRefreshToken = redisTemplateHelper.get("refresh:user:$userId", String::class.java)
 
         authProcessor.validateRedisRefreshToken(redisRefreshToken, refreshToken)
 

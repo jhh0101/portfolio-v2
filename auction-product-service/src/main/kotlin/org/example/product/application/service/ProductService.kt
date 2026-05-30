@@ -23,8 +23,8 @@ import org.example.product.domain.product.repository.ProductImageRepository
 import org.example.product.domain.product.repository.ProductQueryRepository
 import org.example.product.domain.product.repository.ProductRepository
 import org.example.product.domain.product.service.ProductProcessor
+import org.example.redis.zset.RedisZSetHelper
 import org.redisson.api.RScoredSortedSet
-import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -45,7 +45,7 @@ class ProductService(
     private val categoryClient: CategoryClient,
     private val categoryProductClient: CategoryProductClient,
     private val bidClient: BidClient,
-    private val redissonClient: RedissonClient,
+    private val redisZSetHelper: RedisZSetHelper,
     private val s3Service: S3Service,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -80,13 +80,11 @@ class ProductService(
 
         val auctionSave: Auction = auctionRepository.save(auction)
 
-        val closingQueue: RScoredSortedSet<Long> = redissonClient.getScoredSortedSet("auction:closing")
-
         val closingTimestamp: Long = auctionSave.endTime
             .atZone(ZoneId.systemDefault())
             .toEpochSecond()
 
-        closingQueue.add(closingTimestamp.toDouble(), auctionSave.auctionId )
+        redisZSetHelper.queueAdd("auction:closing", closingTimestamp, auctionSave.auctionId)
 
         return productSave.toProductResponse(userDto, categoryDto)
     }
@@ -207,12 +205,9 @@ class ProductService(
             auctionRequest.startTime,
             auctionRequest.endTime
         )
-
-        val closingQueue = redissonClient.getScoredSortedSet<Long?>("auction:closing")
-
         val newScore: Long = auctionRequest.endTime.atZone(ZoneId.systemDefault()).toEpochSecond()
 
-        closingQueue.add(newScore.toDouble(), product.auction?.auctionId)
+        redisZSetHelper.queueAdd("auction:closing", newScore, product.auction?.auctionId)
 
         return product.toProductDetailAndAuctionDto(userDto, categoryDto)
     }
@@ -238,8 +233,7 @@ class ProductService(
         productRepository.delete(product)
 
         val auctionId: Long? = product.auction?.auctionId
-        val closingQueue = redissonClient.getScoredSortedSet<Long>("auction:closing")
-        val removed = closingQueue.remove(auctionId)
+        val removed = redisZSetHelper.queueRemove<Long>("auction:closing", auctionId)
 
         if (removed) {
             log.info("경매 삭제로 인한 Redis 스케줄 제거 완료 - Auction ID: {}", auctionId)
