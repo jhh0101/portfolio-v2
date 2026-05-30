@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -39,6 +40,7 @@ class ProductController(
 ) {
 
     // 상품 추가
+    @PreAuthorize("hasRole('SELLER')")
     @PostMapping
     fun addProduct(
         @RequestBody request: @Valid ProductAndAuctionRequest,
@@ -80,6 +82,7 @@ class ProductController(
     }
 
     // 판매자(자신) 상품 리스트 조회
+    @PreAuthorize("hasRole('SELLER')")
     @GetMapping("/my-product")
     fun myProductList(
         @LoginUser user: DetailsUser,
@@ -92,6 +95,7 @@ class ProductController(
     }
 
     // 상품 상세 수정
+    @PreAuthorize("hasRole('SELLER')")
     @PatchMapping("/{productId}")
     fun updateProduct(
         @LoginUser user: DetailsUser,
@@ -108,6 +112,7 @@ class ProductController(
     }
 
     // 상품 삭제
+    @PreAuthorize("hasRole('SELLER')")
     @DeleteMapping("/{productId}")
     fun deleteProduct(
         @LoginUser user: DetailsUser,
@@ -118,6 +123,7 @@ class ProductController(
     }
 
     // 이미지 메서드
+    @PreAuthorize("hasRole('SELLER')")
     @PostMapping(value = ["/{id}/images"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun uploadImages(
         @PathVariable("id") productId: Long,  // 경로에서 상품 ID 추출
@@ -134,12 +140,14 @@ class ProductController(
         return ResponseEntity.ok(ApiResponse.success("이미지 로드", responses))
     }
 
+    @PreAuthorize("hasRole('SELLER')")
     @PatchMapping("/{id}/images")
     fun moveToMain(@PathVariable("id") id: Long): ResponseEntity<ApiResponse<Void>> {
         productService.moveToMain(id)
         return ResponseEntity.ok(ApiResponse.success("이미지 메인 변경", null))
     }
 
+    @PreAuthorize("hasRole('SELLER')")
     @DeleteMapping("/{id}/image")
     fun deleteImage(@PathVariable("id") imageId: Long): ResponseEntity<ApiResponse<Void>> {
         productService.deleteImage(imageId)

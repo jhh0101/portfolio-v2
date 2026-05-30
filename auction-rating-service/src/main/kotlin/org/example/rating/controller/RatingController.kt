@@ -63,8 +63,8 @@ class RatingController(
         @LoginUser user: DetailsUser,
         @PathVariable ratingId: Long
     ): ResponseEntity<ApiResponse<RatingDeleteResponse>> {
-        val response: RatingDeleteResponse? = ratingService.deleteRating(user.id, ratingId)
-        log.info("평가 수정 시도 - 사용자ID: {}, 평가ID: {}", user.id, ratingId)
+        val response: RatingDeleteResponse = ratingService.deleteRating(user.id, ratingId)
+        log.info("평가 삭제 시도 - 사용자ID: {}, 평가ID: {}", user.id, ratingId)
         return ResponseEntity.ok(ApiResponse.success("판매자 평가 삭제", response))
     }
 

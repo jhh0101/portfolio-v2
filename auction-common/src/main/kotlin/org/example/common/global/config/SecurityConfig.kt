@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer
@@ -18,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @EnableConfigurationProperties(JwtProperties::class)
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 class SecurityConfig(
@@ -42,14 +44,14 @@ class SecurityConfig(
                         "/api/auth/**", "/api/user/signup", "/api/user/verify",  // 로그인, 회원가입 관련
                         "/api/user/reset-password", "/api/groq/**"
                     ).permitAll()
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/category").permitAll()
                     .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/product/**").permitAll()
                     .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/auction/**").permitAll()
                     .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/order/*/auction").permitAll()
                     .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/rating/**").permitAll()
-                    .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/category").hasRole("ADMIN")
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                    .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/product").hasRole("SELLER")
+//                    .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/category").hasRole("ADMIN")
+//                    .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/product").hasRole("SELLER")
                     .anyRequest().authenticated()
             }
             )
