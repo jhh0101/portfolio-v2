@@ -1,4 +1,4 @@
-package org.example.common.global.config
+package org.example.redis.config
 
 import io.lettuce.core.ClientOptions
 import io.lettuce.core.protocol.ProtocolVersion
@@ -25,7 +25,6 @@ class RedisConfig(
 
     @Bean
     fun redisConnectionFactory(): LettuceConnectionFactory {
-        // [핵심] 최신 통신 규약(RESP3) 대신 RESP2를 사용하여 인증 문제 회피
         val clientOptions = ClientOptions.builder()
             .protocolVersion(ProtocolVersion.RESP2)
             .build()
@@ -53,9 +52,9 @@ class RedisConfig(
     fun redissonClient(): RedissonClient {
         val config = Config().apply {
             useSingleServer()
-                .setAddress("redis://$host:$port")
-                .setPassword(password)
+                .setAddress("redis://$host:$port").password = password
         }
         return Redisson.create(config)
     }
+
 }

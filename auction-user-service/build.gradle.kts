@@ -14,6 +14,9 @@ dependencies {
     implementation(project(":auction-seller-api"))
     implementation(project(":auction-bid-api"))
 
+    // redis
+    implementation(project(":auction-redis"))
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-client")
