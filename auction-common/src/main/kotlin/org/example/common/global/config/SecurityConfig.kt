@@ -1,6 +1,6 @@
 package org.example.common.global.config
 
-import org.example.common.global.auth.filter.JwtAuthenticationFilter
+import org.example.common.global.auth.filter.HeaderAuthenticationFilter
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Lazy
@@ -24,7 +24,7 @@ import org.springframework.web.cors.CorsConfiguration
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 class SecurityConfig(
     @param:Lazy
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val headerAuthenticationFilter: HeaderAuthenticationFilter,
 ) {
 
 
@@ -55,7 +55,7 @@ class SecurityConfig(
                     .anyRequest().authenticated()
             }
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 
