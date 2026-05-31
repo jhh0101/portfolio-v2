@@ -2,6 +2,7 @@ package org.example.user.global.resolver
 
 import auction.auctionuserapi.auth.annotation.LoginUser
 import auction.auctionuserapi.auth.dto.DetailsUser
+import jakarta.servlet.http.HttpServletRequest
 import org.example.user.application.auth.dto.SecurityUser
 import org.springframework.core.MethodParameter
 import org.springframework.security.core.context.SecurityContextHolder
@@ -26,18 +27,22 @@ class LoginUserArgumentResolver : HandlerMethodArgumentResolver {
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
     ): Any? {
-        val authentication = SecurityContextHolder.getContext().authentication ?: return null
-        val principal = authentication.principal
+        val request = webRequest.nativeRequest as HttpServletRequest
 
-        return if (principal is SecurityUser) {
-            DetailsUser(
-                id = principal.userId,
-                email = principal.username,
-                nickname = principal.nickname,
-                role = principal.role
-            )
-        } else {
-            null
+        val userIdStr = request.getHeader("X-User-Id")
+        val email = request.getHeader("X-User-Email")
+        val role = request.getHeader("X-User-Role")
+        val nickname = request.getHeader("X-User-Nickname")
+
+        if (userIdStr.isNullOrBlank()) {
+            return null
         }
+
+        return DetailsUser(
+            id = userIdStr.toLong(),
+            email = email,
+            nickname = nickname,
+            role = role
+        )
     }
 }
