@@ -1,8 +1,8 @@
 package org.example.seller.application.service
 
 import auction.auctionsellerapi.status.SellerStatus
-import auction.auctionuserapi.user.client.UserClient
 import auction.auctionuserapi.user.error.UserErrorCode
+import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.seller.application.dto.SellerApplyListResponse
 import org.example.seller.application.dto.SellerRejectRequest
@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 class SellerAdminService(
     private val sellerRepository: SellerRepository,
     private val sellerAdminProcessor: SellerAdminProcessor,
-    private val userClient: UserClient,
+    private val userFeignClient: UserFeignClient,
 ) {
     @Transactional(readOnly = true)
     fun sellerList(pageable: Pageable): Page<SellerApplyListResponse> {
@@ -63,7 +63,7 @@ class SellerAdminService(
         val seller: Seller = sellerRepository.findById(sellerId)
             .orElseThrow { CustomException(UserErrorCode.USER_NOT_FOUND) }
 
-        val userDto = userClient.userModuleDto(seller.userId)
+        val userDto = userFeignClient.userModuleDto(seller.userId)
 
         return seller.toDto(userDto.userNickname)
     }
