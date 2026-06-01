@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
+    id("java-library")
 }
 
 dependencies {
@@ -8,6 +9,6 @@ dependencies {
     implementation(project(":auction-user-api"))
 
     // Feign
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1")
+    api("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1")
 }
 

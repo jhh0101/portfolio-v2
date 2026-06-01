@@ -5,7 +5,6 @@ import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.product.client.ProductClient
 import auction.auctionproductapi.product.dto.ProductCommonResponse
-import auction.auctionuserapi.user.client.UserClient
 import auction.auctionuserapi.user.dto.UserCommonResponse
 import org.example.bid.application.dto.BidRequest
 import org.example.bid.application.dto.BidResultResponse
@@ -16,6 +15,7 @@ import org.example.bid.domain.bid.dto.toDto
 import org.example.bid.domain.bid.entity.Bid
 import auction.auctionbidapi.status.BidStatus
 import auction.auctionbidapi.error.BidErrorCode
+import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.domain.bid.repository.BidRepository
 import org.example.bid.domain.bid.service.BidProcessor
 import org.example.common.global.error.CustomException
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class BidService(
     private val bidRepository: BidRepository,
-    private val userCommonClient: UserClient,
+    private val userFeignClient: UserFeignClient,
     private val auctionClient: AuctionClient,
     private val auctionBidClient: AuctionBidClient,
     private val productClient: ProductClient,
@@ -38,7 +38,7 @@ class BidService(
 
     @Transactional
     fun addBid(userId: Long, auctionId: Long, request: BidRequest): BidResultResponse {
-        val userDto: UserCommonResponse = userCommonClient.userModuleDto(userId)
+        val userDto: UserCommonResponse = userFeignClient.userModuleDto(userId)
 
         val auctionDto: AuctionCommonResponse = auctionBidClient.auctionLockModuleDto(auctionId)
 
@@ -62,7 +62,7 @@ class BidService(
     @Transactional(readOnly = true)
     fun findBid(auctionId: Long, pageable: Pageable): Page<BidInfoResponse> {
 
-        return bidRepository.findAllByAuctionIdAndStatus(auctionId, BidStatus.ACTIVE, pageable).map { it.toDto(userCommonClient.userModuleDto(it.bidderId)) }
+        return bidRepository.findAllByAuctionIdAndStatus(auctionId, BidStatus.ACTIVE, pageable).map { it.toDto(userFeignClient.userModuleDto(it.bidderId)) }
     }
 
     @Transactional(readOnly = true)
@@ -98,7 +98,7 @@ class BidService(
 
         val productDto = productClient.productModuleDto(auctionDto.productId)
 
-        val userDto = userCommonClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         val bid: Bid = bidRepository.findByIdOrNull(bidId)
             ?: throw CustomException(BidErrorCode.BID_NOT_FOUND)
