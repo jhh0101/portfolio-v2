@@ -6,11 +6,10 @@ import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.error.AuctionErrorCode
 import auction.auctionproductapi.product.client.ProductClient
 import auction.auctionproductapi.product.error.ProductErrorCode
-import auction.auctionuserapi.user.client.UserClient
 import auction.auctionuserapi.user.client.UserOrderClient
-import auction.auctionuserapi.user.dto.UserCommonResponse
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.Role
+import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.common.global.error.GlobalErrorCode
 import org.example.rating.application.dto.RatingDeleteResponse
@@ -34,8 +33,7 @@ class RatingService(
     val ratingRepository: RatingRepository,
     val ratingQueryRepository: RatingQueryRepository,
     val orderClient: OrderClient,
-    val userClient: UserClient,
-    val userOrderClient: UserOrderClient,
+    val userFeignClient: UserFeignClient,
     val productClient: ProductClient,
     val auctionClient: AuctionClient,
 ) {
@@ -52,8 +50,8 @@ class RatingService(
             throw CustomException(GlobalErrorCode.BAD_REQUEST, "이미 주문에 대한 평가가 존재합니다.")
         }
 
-        val toUserDto = userClient.userModuleDto(userId)
-        val fromUserDto = userClient.userModuleDto(orderDto.buyerId)
+        val toUserDto = userFeignClient.userModuleDto(userId)
+        val fromUserDto = userFeignClient.userModuleDto(orderDto.buyerId)
 
         val rating = Rating(
             orderId = orderId,
@@ -68,7 +66,7 @@ class RatingService(
 
         val ratingAvg: Double = ratingQueryRepository.avgRating(ratingSave.toUserId)
 
-        userOrderClient.updateUserRating(ratingSave.toUserId, ratingAvg)
+        userFeignClient.updateUserRating(ratingSave.toUserId, ratingAvg)
 
         val auctionDto = auctionClient.auctionModuleDto(orderDto.auctionId)
         val productDto = productClient.productModuleDto(auctionDto.productId)
@@ -80,8 +78,8 @@ class RatingService(
     fun findRating(orderId: Long): RatingResponse {
         val rating = ratingRepository.findByOrderId(orderId)
             ?: throw CustomException(RatingErrorCode.RATING_NOT_FOUND)
-        val toUserDto = userClient.userModuleDto(rating.toUserId)
-        val fromUserDto = userClient.userModuleDto(rating.fromUserId)
+        val toUserDto = userFeignClient.userModuleDto(rating.toUserId)
+        val fromUserDto = userFeignClient.userModuleDto(rating.fromUserId)
         val orderDto = orderClient.orderModuleDto(orderId)
         val auctionDto = auctionClient.auctionModuleDto(orderDto.auctionId)
         val productDto = productClient.productModuleDto(auctionDto.productId)
@@ -106,12 +104,12 @@ class RatingService(
 
         val ratingAvg: Double = ratingQueryRepository.avgRating(rating.toUserId)
 
-        userOrderClient.updateUserRating(rating.toUserId, ratingAvg)
+        userFeignClient.updateUserRating(rating.toUserId, ratingAvg)
 
         val orderDto = orderClient.orderModuleDto(orderId)
 
-        val toUserDto = userClient.userModuleDto(userId)
-        val fromUserDto = userClient.userModuleDto(rating.fromUserId)
+        val toUserDto = userFeignClient.userModuleDto(userId)
+        val fromUserDto = userFeignClient.userModuleDto(rating.fromUserId)
 
         val auctionDto = auctionClient.auctionModuleDto(orderDto.auctionId)
         val productDto = productClient.productModuleDto(auctionDto.productId)
@@ -124,7 +122,7 @@ class RatingService(
         val rating: Rating = ratingRepository.findByIdOrNull(ratingId)
             ?: throw CustomException(RatingErrorCode.RATING_NOT_FOUND, "평가를 찾을 수 없습니다.")
 
-        val toUserDto = userClient.userModuleDto(userId)
+        val toUserDto = userFeignClient.userModuleDto(userId)
 
         if (rating.fromUserId != userId && toUserDto.role != Role.ADMIN.name) {
             throw CustomException(GlobalErrorCode.BAD_REQUEST, "삭제 권한이 없습니다.")
@@ -134,7 +132,7 @@ class RatingService(
 
         val ratingAvg: Double = ratingQueryRepository.avgRating(rating.toUserId)
 
-        userOrderClient.updateUserRating(rating.toUserId, ratingAvg)
+        userFeignClient.updateUserRating(rating.toUserId, ratingAvg)
 
         return rating.toDeleteDto(toUserDto)
     }
@@ -145,10 +143,10 @@ class RatingService(
 
         if (ratings.isEmpty) return Page.empty()
 
-        val toUserDto = userClient.userModuleDto(toUserId)
+        val toUserDto = userFeignClient.userModuleDto(toUserId)
 
         val fromUserIds = ratings.map { it.fromUserId }.toSet().toList()
-        val fromUserDtos = userClient.userListModuleDto(fromUserIds)
+        val fromUserDtos = userFeignClient.userListModuleDto(fromUserIds)
         val fromUserMap = fromUserDtos.associateBy { it.userId }
 
         val orderIds = ratings.map { it.orderId }.toSet().toList()
