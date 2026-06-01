@@ -7,8 +7,10 @@ dependencies {
     implementation(project(":auction-common"))
 
     // interface
-    implementation(project(":auction-user-api"))
     implementation(project(":auction-seller-api"))
+
+    // feign
+    implementation(project(":auction-user-feign"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")

@@ -1,8 +1,7 @@
 package org.example.seller.application.service
 
-import auction.auctionuserapi.user.client.UserClient
-import auction.auctionuserapi.user.client.UserSellerClient
 import auction.auctionuserapi.user.error.UserErrorCode
+import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.seller.application.dto.RejectReasonResponse
 import org.example.seller.application.dto.SellerApplyRequest
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 class SellerService(
     private val sellerRepository: SellerRepository,
     private val sellerProcessor: SellerProcessor,
-    private val userClient: UserClient,
+    private val userFeignClient: UserFeignClient,
 ) {
 
 
@@ -39,7 +38,7 @@ class SellerService(
         val seller: Seller = sellerRepository.findByUserId(userId)
             .orElseThrow { CustomException(UserErrorCode.USER_NOT_FOUND) }
 
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         return seller.toDto(userDto.userNickname)
     }
