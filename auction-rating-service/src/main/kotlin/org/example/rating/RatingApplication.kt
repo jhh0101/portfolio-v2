@@ -1,4 +1,4 @@
-package org.example.auction.gateway
+package org.example.rating
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -8,8 +8,8 @@ import org.springframework.boot.runApplication
         "org.example"
     ]
 )
-class AuctionGatewayApplication
+class RatingApplication
 
 fun main(args: Array<String>) {
-    runApplication<AuctionGatewayApplication>(*args)
+    runApplication<RatingApplication>(*args)
 }
