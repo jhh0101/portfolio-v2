@@ -12,9 +12,11 @@ dependencies {
     // interface
     implementation(project(":auction-product-api"))
     implementation(project(":auction-bid-api"))
-    implementation(project(":auction-user-api"))
     implementation(project(":auction-order-api"))
     implementation(project(":auction-category-api"))
+
+    // feign
+    implementation(project(":auction-user-feign"))
 
     // redis
     implementation(project(":auction-redis"))
