@@ -10,7 +10,6 @@ dependencies {
 
     // interface
     implementation(project(":auction-order-api"))
-    implementation(project(":auction-user-api"))
     implementation(project(":auction-product-api"))
 
     // feign
