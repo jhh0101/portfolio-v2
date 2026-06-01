@@ -9,7 +9,7 @@ import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.client.ProductBidClient
 import auction.auctionproductapi.product.status.ProductStatus
-import auction.auctionuserapi.user.client.UserClient
+import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.application.service.BidService
 import org.example.bid.domain.bid.entity.Bid
 import org.example.bid.domain.bid.repository.BidRepository
@@ -22,7 +22,7 @@ class BidUserCommandService(
     private val bidRepository: BidRepository,
     private val bidService: BidService,
     private val auctionClient: AuctionClient,
-    private val userClient: UserClient,
+    private val userFeignClient: UserFeignClient,
     private val productBidClient: ProductBidClient,
 ) : BidUserCommandClient {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -30,7 +30,7 @@ class BidUserCommandService(
         val auctionIds = productBidClient.findAuctionIdsBySellerId(userId, AuctionStatus.PROCEEDING, ProductStatus.ACTIVE)
         val bidList: List<Bid> = bidRepository.findTopBidsByAuctionIds(auctionIds)
         val userBids: List<Bid> = bidRepository.findLatestBidsByUserId(userId)
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         val auctionCache = mutableMapOf<Long, AuctionCommonResponse>()
 
