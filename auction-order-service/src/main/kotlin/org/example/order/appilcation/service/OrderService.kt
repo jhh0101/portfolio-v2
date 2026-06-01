@@ -3,7 +3,7 @@ package org.example.order.appilcation.service
 import auction.auctionorderapi.error.OrderErrorCode
 import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.product.client.ProductDetailClient
-import auction.auctionuserapi.user.client.UserClient
+import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.order.appilcation.dto.OrderResponse
 import org.example.order.appilcation.dto.toDto
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
-    private val userClient: UserClient,
+    private val userFeignClient: UserFeignClient,
     private val productDetailClient: ProductDetailClient,
     private val auctionClient: AuctionClient,
 ) {
@@ -33,7 +33,7 @@ class OrderService(
             return Page.empty(pageable)
         }
 
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         val auctionIds = orders.content.map { it.auctionId }
         val auctionDtos = auctionClient.auctionListModuleDto(auctionIds)
@@ -60,7 +60,7 @@ class OrderService(
         val order: Order = orderRepository.findByAuctionId(auctionId)
             ?: throw CustomException(OrderErrorCode.ORDER_NOT_FOUND)
 
-        val userDto = userClient.userModuleDto(order.buyerId)
+        val userDto = userFeignClient.userModuleDto(order.buyerId)
 
         val auctionDto = auctionClient.auctionModuleDto(order.auctionId)
 

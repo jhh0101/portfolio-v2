@@ -11,7 +11,6 @@ dependencies {
     implementation(project(":auction-product-service"))
 
     // interface
-    implementation(project(":auction-user-api"))
     implementation(project(":auction-product-api"))
     implementation(project(":auction-bid-api"))
 
