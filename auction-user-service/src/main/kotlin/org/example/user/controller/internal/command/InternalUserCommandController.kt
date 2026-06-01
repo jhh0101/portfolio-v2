@@ -4,8 +4,9 @@ import auction.auctionuserapi.user.type.Role
 import org.example.user.application.user.service.module.UserCommonService
 import org.example.user.application.user.service.module.UserOrderService
 import org.example.user.application.user.service.module.UserSellerService
-import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -16,22 +17,22 @@ class InternalUserCommandController(
     private val userOrderService: UserOrderService,
     private val userSellerService: UserSellerService,
 ) {
-    @GetMapping("/{id}/addPoint")
+    @PostMapping("/{id}/addPoint")
     fun userAddPoint(@PathVariable("id") userId: Long, bidPrice: Long) {
         userCommonService.userAddPoint(userId, bidPrice)
     }
 
-    @GetMapping("/{id}/subPoint")
+    @PostMapping("/{id}/subPoint")
     fun userSubPoint(@PathVariable("id") userId: Long, bidPrice: Long) {
         userCommonService.userSubPoint(userId, bidPrice)
     }
 
-    @GetMapping("/{id}/update-rating")
+    @PatchMapping("/{id}/update-rating")
     fun updateUserRating(@PathVariable("id") userId: Long, ratingAvg: Double) {
         userOrderService.updateUserRating(userId, ratingAvg)
     }
 
-    @GetMapping("/{id}/update-rating")
+    @PatchMapping("/{id}/update-role")
     fun userUpdateRole(@PathVariable("id") userId:Long, role: Role) {
         userSellerService.userUpdateRole(userId, role)
     }
