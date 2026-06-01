@@ -5,7 +5,7 @@ import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.product.client.ProductClient
 import auction.auctionproductapi.product.dto.ProductCommonResponse
-import auction.auctionuserapi.user.client.UserClient
+import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.application.dto.BidResponse
 import org.example.bid.domain.bid.dto.BidHistoryResponse
 import org.example.bid.domain.bid.entity.Bid
@@ -23,7 +23,7 @@ class BidAdminService(
     private val bidRepository: BidRepository,
     private val auctionClient: AuctionClient,
     private val productClient: ProductClient,
-    private val userClient: UserClient,
+    private val userFeignClient: UserFeignClient,
 ) {
     @Transactional(readOnly = true)
     fun findBidHistorySlice(userId: Long, pageable: Pageable): Slice<BidHistoryResponse> {
@@ -64,7 +64,7 @@ class BidAdminService(
             return SliceImpl(emptyList(), pageable, false)
         }
 
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         return bidSlice.map { bid ->
             BidResponse(

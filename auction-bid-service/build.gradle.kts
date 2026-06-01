@@ -15,6 +15,9 @@ dependencies {
     implementation(project(":auction-product-api"))
     implementation(project(":auction-bid-api"))
 
+    // feign
+    implementation(project(":auction-user-feign"))
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
