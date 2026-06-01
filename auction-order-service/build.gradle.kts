@@ -13,6 +13,9 @@ dependencies {
     implementation(project(":auction-user-api"))
     implementation(project(":auction-product-api"))
 
+    // feign
+    implementation(project(":auction-user-feign"))
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // Redis & Redisson
