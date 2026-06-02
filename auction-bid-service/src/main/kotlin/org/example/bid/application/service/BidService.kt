@@ -67,8 +67,11 @@ class BidService(
     fun findBidHistoryPage(userId: Long, pageable: Pageable): Page<BidHistoryResponse> {
         val bidPage: Page<Bid> = bidRepository.findPageByBidderId(userId, pageable)
 
-        val auctionIds: List<Long> = bidPage.content.map { it.auctionId }
+        if (bidPage.isEmpty) {
+            return PageImpl(emptyList(), pageable, 0)
+        }
 
+        val auctionIds: List<Long> = bidPage.content.map { it.auctionId }
         val auctions: List<AuctionCommonResponse> = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap: Map<Long, AuctionCommonResponse> = auctions.associateBy { it.auctionId }
 
@@ -91,7 +94,7 @@ class BidService(
     }
 
     @Transactional
-    fun cancelBid(userId: Long, bidId: Long, auctionId: Long): BidResultResponse {
+    fun cancelBid(userId: Long, bidId: Long, auctionId: Long, isSystemCancel: Boolean = false): BidResultResponse {
         val auctionDto = auctionFeignClient.auctionLockModuleDto(auctionId)
 
         val productDto = productFeignClient.productModuleDto(auctionDto.productId)
@@ -114,7 +117,8 @@ class BidService(
             userId,
             bid,
             currentTopBid,
-            bidList
+            bidList,
+            isSystemCancel
         )
 
         return bid.toDto(productDto.title, userDto.userPoint)

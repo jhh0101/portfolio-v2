@@ -61,7 +61,8 @@ class BidProcessor(
         userId: Long,
         bid: Bid,
         currentTopBid: Bid,
-        bidList: List<Bid>
+        bidList: List<Bid>,
+        isSystemCancel: Boolean = false
     ) {
         val bidAuctionDto = auctionFeignClient.auctionModuleDto(bid.auctionId)
 
@@ -75,8 +76,10 @@ class BidProcessor(
 
         val now = LocalDateTime.now()
 
-        if (now.isAfter(bid.createdAt?.plusMinutes(10)) || now.isAfter(auctionDto.endTime?.minusMinutes(10))) {
-            throw CustomException(BidErrorCode.BID_CANCEL_RESTRICTED)
+        if (!isSystemCancel) {
+            if (now.isAfter(bid.createdAt?.plusMinutes(10)) || now.isAfter(auctionDto.endTime?.minusMinutes(10))) {
+                throw CustomException(BidErrorCode.BID_CANCEL_RESTRICTED)
+            }
         }
 
         userFeignClient.userAddPoint(bid.bidderId, bid.bidPrice)

@@ -60,7 +60,7 @@ class InternalProductQueryController(
     }
 
     @GetMapping("/{productIds}/detail/list")
-    fun productDetailResponses(@PathVariable("productIds") productIds: List<Long>) : List<ProductDetailResponse> {
+    fun productDetailResponses(@RequestParam("productIds") productIds: List<Long>) : List<ProductDetailResponse> {
         return productDetailService.productDetailResponses(productIds)
     }
 

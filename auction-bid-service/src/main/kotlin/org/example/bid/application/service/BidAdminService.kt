@@ -11,6 +11,7 @@ import org.example.bid.domain.bid.dto.BidHistoryResponse
 import org.example.bid.domain.bid.entity.Bid
 import org.example.bid.domain.bid.repository.BidRepository
 import org.example.common.global.error.CustomException
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
@@ -28,6 +29,10 @@ class BidAdminService(
     @Transactional(readOnly = true)
     fun findBidHistorySlice(userId: Long, pageable: Pageable): Slice<BidHistoryResponse> {
         val bidPage: Slice<Bid> = bidRepository.findSliceByBidderId(userId, pageable)
+
+        if (bidPage.isEmpty) {
+            return PageImpl(emptyList(), pageable, 0)
+        }
 
         val auctionIds: List<Long> = bidPage.content.map { it.auctionId }
         val auctions: List<AuctionCommonResponse> = auctionFeignClient.auctionListModuleDto(auctionIds)

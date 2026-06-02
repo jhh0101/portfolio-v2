@@ -30,18 +30,18 @@ interface UserFeignClient : UserClient, UserBidClient, UserOrderClient, UserSell
     @GetMapping("/{id}/exists")
     override fun validateUserExists(@PathVariable("id") userId: Long)
 
-    @GetMapping("/{id}/addPoint")
-    override fun userAddPoint(@PathVariable("id") userId: Long, bidPrice: Long)
+    @PostMapping("/{id}/addPoint")
+    override fun userAddPoint(@PathVariable("id") userId: Long, @RequestParam("bidPrice") bidPrice: Long)
 
-    @GetMapping("/{id}/subPoint")
-    override fun userSubPoint(@PathVariable("id") userId: Long, bidPrice: Long)
+    @PostMapping("/{id}/subPoint")
+    override fun userSubPoint(@PathVariable("id") userId: Long, @RequestParam("bidPrice") bidPrice: Long)
 
     @GetMapping("/{userId}/validCheck/{bidderId}")
     override fun userValidCheck(@PathVariable("userId") userId: Long, @PathVariable("bidderId") bidderId: Long)
 
     @PatchMapping("/{id}/update-rating")
-    override fun updateUserRating(@PathVariable("id") userId: Long, ratingAvg: Double)
+    override fun updateUserRating(@PathVariable("id") userId: Long, @RequestParam("ratingAvg") ratingAvg: Double)
 
     @PatchMapping("/{id}/update-role")
-    override fun userUpdateRole(@PathVariable("id") userId:Long, role: Role)
+    override fun userUpdateRole(@PathVariable("id") userId:Long, @RequestParam("role") role: Role)
 }

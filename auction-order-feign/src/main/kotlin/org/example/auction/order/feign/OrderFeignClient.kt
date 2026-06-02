@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam
 interface OrderFeignClient : OrderClient {
     
     @PostMapping("/{auctionId}/save/{buyerId}")
-    override fun saveOrder(@PathVariable("auctionId") auctionId: Long, @PathVariable("buyerId") buyerId: Long, finalPrice: Long)
+    override fun saveOrder(@PathVariable("auctionId") auctionId: Long,
+                           @PathVariable("buyerId") buyerId: Long,
+                           @RequestParam("finalPrice") finalPrice: Long
+    )
 
     @GetMapping("/{id}")
     override fun orderModuleDto(@PathVariable("id") orderId: Long): OrderCommonResponse
