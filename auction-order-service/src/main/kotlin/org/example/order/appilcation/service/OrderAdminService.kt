@@ -1,6 +1,6 @@
 package org.example.order.appilcation.service
 
-import auction.auctionproductapi.auction.client.AuctionClient
+import org.example.auction.product.feign.auction.AuctionFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.order.appilcation.dto.OrderResponse
@@ -17,7 +17,7 @@ class OrderAdminService(
     private val orderRepository: OrderRepository,
     private val userFeignClient: UserFeignClient,
     private val productFeignClient: ProductFeignClient,
-    private val auctionClient: AuctionClient,
+    private val auctionFeignClient: AuctionFeignClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -33,7 +33,7 @@ class OrderAdminService(
         val userDto = userFeignClient.userModuleDto(userId)
 
         val auctionIds = orders.content.map { it.auctionId }
-        val auctionDtos = auctionClient.auctionListModuleDto(auctionIds)
+        val auctionDtos = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap = auctionDtos.associateBy { it.auctionId }
 
         val productIds = auctionDtos.map { it.productId }.distinct()

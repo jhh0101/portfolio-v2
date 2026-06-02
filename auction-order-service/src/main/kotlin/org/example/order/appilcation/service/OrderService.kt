@@ -1,7 +1,7 @@
 package org.example.order.appilcation.service
 
 import auction.auctionorderapi.error.OrderErrorCode
-import auction.auctionproductapi.auction.client.AuctionClient
+import org.example.auction.product.feign.auction.AuctionFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
@@ -20,7 +20,7 @@ class OrderService(
     private val orderRepository: OrderRepository,
     private val userFeignClient: UserFeignClient,
     private val productFeignClient: ProductFeignClient,
-    private val auctionClient: AuctionClient,
+    private val auctionFeignClient: AuctionFeignClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -36,7 +36,7 @@ class OrderService(
         val userDto = userFeignClient.userModuleDto(userId)
 
         val auctionIds = orders.content.map { it.auctionId }
-        val auctionDtos = auctionClient.auctionListModuleDto(auctionIds)
+        val auctionDtos = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap = auctionDtos.associateBy { it.auctionId }
 
         val productIds = auctionDtos.map { it.productId }.distinct()
@@ -62,7 +62,7 @@ class OrderService(
 
         val userDto = userFeignClient.userModuleDto(order.buyerId)
 
-        val auctionDto = auctionClient.auctionModuleDto(order.auctionId)
+        val auctionDto = auctionFeignClient.auctionModuleDto(order.auctionId)
 
         val productDto = productFeignClient.productDetailResponse(auctionDto.productId)
 
