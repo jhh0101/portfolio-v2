@@ -1,4 +1,3 @@
-// auction-domain/build.gradle.kts
 plugins {
     kotlin("jvm")
     kotlin("plugin.spring")

@@ -2,6 +2,7 @@ package org.example.redis.zset
 
 import org.redisson.api.RScoredSortedSet
 import org.redisson.api.RedissonClient
+import org.redisson.codec.TypedJsonJacksonCodec
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -31,5 +32,10 @@ class RedisZSetHelper(
         queue.removeAll(items)
 
         return items
+    }
+
+    fun <V> queueRemoveAll(key: String, ids: List<V>) {
+        val queue = redissonClient.getScoredSortedSet<V>(key)
+        queue.removeAll(ids)
     }
 }
