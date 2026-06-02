@@ -1,13 +1,9 @@
 package org.example.product.application.service
 
-import auction.auctionbidapi.client.BidClient
 import auction.auctionbidapi.status.BidStatus
-import auction.auctioncategoryapi.client.CategoryClient
-import auction.auctioncategoryapi.client.CategoryProductClient
 import auction.auctioncategoryapi.dto.CategoryCommonResponse
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.status.ProductStatus
-import auction.auctionuserapi.user.client.UserClient
 import org.example.auction.application.dto.AuctionRequest
 import org.example.auction.domain.auction.entity.Auction
 import org.example.auction.domain.auction.repository.AuctionRepository
@@ -18,7 +14,10 @@ import org.example.product.domain.product.dto.*
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.entity.ProductImage
 import auction.auctionproductapi.product.error.ProductErrorCode
+import org.example.auction.bid.feign.BidFeignClient
+import org.example.auction.category.feign.CategoryFeignClient
 import org.example.auction.s3.service.S3Service
+import org.example.auction.user.feign.UserFeignClient
 import org.example.product.domain.product.repository.ProductImageRepository
 import org.example.product.domain.product.repository.ProductQueryRepository
 import org.example.product.domain.product.repository.ProductRepository
@@ -40,10 +39,9 @@ class ProductService(
     private val auctionRepository: AuctionRepository,
     private val productQueryRepository: ProductQueryRepository,
     private val productProcessor: ProductProcessor,
-    private val userClient: UserClient,
-    private val categoryClient: CategoryClient,
-    private val categoryProductClient: CategoryProductClient,
-    private val bidClient: BidClient,
+    private val userFeignClient: UserFeignClient,
+    private val categoryFeignClient: CategoryFeignClient,
+    private val bidFeignClient: BidFeignClient,
     private val redisZSetHelper: RedisZSetHelper,
     private val s3Service: S3Service,
 ) {
@@ -52,8 +50,8 @@ class ProductService(
     // 상품 메서드
     @Transactional
     fun addProduct(userId: Long, productRequest: ProductRequest, auctionRequest: AuctionRequest): ProductResponse {
-        val userDto = userClient.userModuleDto(userId)
-        val categoryDto = categoryClient.categoryModuleDto(productRequest.categoryId)
+        val userDto = userFeignClient.userModuleDto(userId)
+        val categoryDto = categoryFeignClient.categoryModuleDto(productRequest.categoryId)
 
         val product = Product(
             sellerId = userDto.userId,
@@ -96,7 +94,7 @@ class ProductService(
     ): Page<ProductAndAuctionResponse> {
         val filterCategoryIds = condition.path
             ?.takeIf { it.isNotBlank() } // 비어있지 않을 때만 다음 단계 진행
-            ?.let { path -> categoryProductClient.categoryDtoByPath(path).map { it.categoryId } }
+            ?.let { path -> categoryFeignClient.categoryDtoByPath(path).map { it.categoryId } }
 
         val auctions: Page<Product> = productQueryRepository.productList(null, condition, filterCategoryIds, pageable)
 
@@ -104,7 +102,7 @@ class ProductService(
 
         val fetchedCategoryIds: List<Long> = auctions.map { it.categoryId }.distinct().toList()
 
-        val displayCategoryDtos = categoryProductClient.categoryDtoByIds(fetchedCategoryIds)
+        val displayCategoryDtos = categoryFeignClient.categoryListModuleDto(fetchedCategoryIds)
 
         val categoryMap = displayCategoryDtos.associateBy { it.categoryId }
 
@@ -127,10 +125,10 @@ class ProductService(
         val product = productRepository.findWithAuctionByProductId(productId)
             ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND)
 
-        val userDto = userClient.userModuleDto(product.sellerId)
+        val userDto = userFeignClient.userModuleDto(product.sellerId)
         val isSeller = userDto.userId == userId
 
-        val categoryDto = categoryClient.categoryModuleDto(product.categoryId)
+        val categoryDto = categoryFeignClient.categoryModuleDto(product.categoryId)
 
         val (shouldIncrease, newCookieValue) = productProcessor.validateFindProductDetail(
             productId, isSeller, viewedCookieValue
@@ -151,11 +149,11 @@ class ProductService(
         condition: ProductListCondition,
         pageable: Pageable
     ): Page<ProductAndAuctionResponse> {
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         val filterCategoryIds = condition.path
             ?.takeIf { it.isNotBlank() } // 비어있지 않을 때만 다음 단계 진행
-            ?.let { path -> categoryProductClient.categoryDtoByPath(path).map { it.categoryId } }
+            ?.let { path -> categoryFeignClient.categoryDtoByPath(path).map { it.categoryId } }
 
         val auctions: Page<Product> = productQueryRepository.productList(userId, condition, filterCategoryIds, pageable)
 
@@ -163,7 +161,7 @@ class ProductService(
 
         val fetchedCategoryIds: List<Long> = auctions.map { it.categoryId }.distinct().toList()
 
-        val displayCategoryDtos = categoryProductClient.categoryDtoByIds(fetchedCategoryIds)
+        val displayCategoryDtos = categoryFeignClient.categoryListModuleDto(fetchedCategoryIds)
 
         val categoryMap = displayCategoryDtos.associateBy { it.categoryId }
 
@@ -189,12 +187,12 @@ class ProductService(
             throw CustomException(GlobalErrorCode.BAD_REQUEST, "사용자가 일치하지 않습니다.")
         }
 
-        if (bidClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
+        if (bidFeignClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
             throw CustomException(ProductErrorCode.CANNOT_MODIFY_AFTER_BID, "입찰한 상품은 수정할 수 없습니다.")
         }
 
-        val userDto = userClient.userModuleDto(userId)
-        val categoryDto = categoryClient.categoryModuleDto(productRequest.categoryId)
+        val userDto = userFeignClient.userModuleDto(userId)
+        val categoryDto = categoryFeignClient.categoryModuleDto(productRequest.categoryId)
 
         product.updateProduct(
             categoryDto.categoryId,
@@ -221,7 +219,7 @@ class ProductService(
             throw CustomException(GlobalErrorCode.BAD_REQUEST, "사용자가 일치하지 않습니다.")
         }
 
-        if (bidClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
+        if (bidFeignClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
             throw CustomException(ProductErrorCode.CANNOT_MODIFY_AFTER_BID, "입찰한 상품은 수정할 수 없습니다.")
         }
         for (img in product.images) {

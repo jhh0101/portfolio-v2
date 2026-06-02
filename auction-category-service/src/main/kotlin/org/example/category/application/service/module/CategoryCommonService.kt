@@ -23,9 +23,12 @@ class CategoryCommonService(
     }
 
     override fun categoryListModuleDto(categoryIds: List<Long>): List<CategoryCommonResponse> {
-        val categorise = categoryRepository.findByCategoryIdIn(categoryIds)
+        if (categoryIds.isEmpty()) {
+            return emptyList()
+        }
+        val categories = categoryRepository.findByCategoryIdIn(categoryIds)
 
-        return categorise.map {category ->
+        return categories.map {category ->
             CategoryCommonResponse(
                 categoryId = category.categoryId ?: 0L,
                 categoryName = category.category

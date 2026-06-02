@@ -26,4 +26,11 @@ include("auction-rating-api")
 include("auction-redis")
 include("auction-s3")
 include("auction-gateway")
-include("auction-s3")
+
+// feign 모듈
+include("auction-user-feign")
+include("auction-product-feign")
+include("auction-seller-feign")
+include("auction-order-feign")
+include("auction-category-feign")
+include("auction-bid-feign")

@@ -1,9 +1,9 @@
 package org.example.order.appilcation.service
 
 import auction.auctionorderapi.error.OrderErrorCode
-import auction.auctionproductapi.auction.client.AuctionClient
-import auction.auctionproductapi.product.client.ProductDetailClient
-import auction.auctionuserapi.user.client.UserClient
+import org.example.auction.product.feign.auction.AuctionFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
+import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.order.appilcation.dto.OrderResponse
 import org.example.order.appilcation.dto.toDto
@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
-    private val userClient: UserClient,
-    private val productDetailClient: ProductDetailClient,
-    private val auctionClient: AuctionClient,
+    private val userFeignClient: UserFeignClient,
+    private val productFeignClient: ProductFeignClient,
+    private val auctionFeignClient: AuctionFeignClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -33,14 +33,14 @@ class OrderService(
             return Page.empty(pageable)
         }
 
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         val auctionIds = orders.content.map { it.auctionId }
-        val auctionDtos = auctionClient.auctionListModuleDto(auctionIds)
+        val auctionDtos = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap = auctionDtos.associateBy { it.auctionId }
 
         val productIds = auctionDtos.map { it.productId }.distinct()
-        val productDtos = productDetailClient.productDetailResponses(productIds)
+        val productDtos = productFeignClient.productDetailResponses(productIds)
         val productMap = productDtos.associateBy { it.productId }
 
         // 4. 데이터 최종 조립
@@ -60,11 +60,11 @@ class OrderService(
         val order: Order = orderRepository.findByAuctionId(auctionId)
             ?: throw CustomException(OrderErrorCode.ORDER_NOT_FOUND)
 
-        val userDto = userClient.userModuleDto(order.buyerId)
+        val userDto = userFeignClient.userModuleDto(order.buyerId)
 
-        val auctionDto = auctionClient.auctionModuleDto(order.auctionId)
+        val auctionDto = auctionFeignClient.auctionModuleDto(order.auctionId)
 
-        val productDto = productDetailClient.productDetailResponse(auctionDto.productId)
+        val productDto = productFeignClient.productDetailResponse(auctionDto.productId)
 
         log.info("옥션 {}의 낙찰자 조회", auctionId)
         return order.toDto(userDto, productDto, auctionDto)

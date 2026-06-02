@@ -1,8 +1,8 @@
 package org.example.order.appilcation.service
 
-import auction.auctionproductapi.auction.client.AuctionClient
-import auction.auctionproductapi.product.client.ProductDetailClient
-import auction.auctionuserapi.user.client.UserClient
+import org.example.auction.product.feign.auction.AuctionFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
+import org.example.auction.user.feign.UserFeignClient
 import org.example.order.appilcation.dto.OrderResponse
 import org.example.order.appilcation.dto.toDto
 import org.example.order.domain.repository.OrderRepository
@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class OrderAdminService(
     private val orderRepository: OrderRepository,
-    private val userClient: UserClient,
-    private val productDetailClient: ProductDetailClient,
-    private val auctionClient: AuctionClient,
+    private val userFeignClient: UserFeignClient,
+    private val productFeignClient: ProductFeignClient,
+    private val auctionFeignClient: AuctionFeignClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -30,14 +30,14 @@ class OrderAdminService(
             return orders.map { it.toDto(null, null, null) }
         }
 
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         val auctionIds = orders.content.map { it.auctionId }
-        val auctionDtos = auctionClient.auctionListModuleDto(auctionIds)
+        val auctionDtos = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap = auctionDtos.associateBy { it.auctionId }
 
         val productIds = auctionDtos.map { it.productId }.distinct()
-        val productDtos = productDetailClient.productDetailResponses(productIds)
+        val productDtos = productFeignClient.productDetailResponses(productIds)
         val productMap = productDtos.associateBy { it.productId }
 
         // 4. 데이터 최종 조립

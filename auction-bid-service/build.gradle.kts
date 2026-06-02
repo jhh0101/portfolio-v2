@@ -1,4 +1,3 @@
-// auction-domain/build.gradle.kts
 plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
@@ -8,12 +7,13 @@ plugins {
 
 dependencies {
     implementation(project(":auction-common"))
-    implementation(project(":auction-product-service"))
 
     // interface
-    implementation(project(":auction-user-api"))
-    implementation(project(":auction-product-api"))
     implementation(project(":auction-bid-api"))
+
+    // feign
+    implementation(project(":auction-user-feign"))
+    implementation(project(":auction-product-feign"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")

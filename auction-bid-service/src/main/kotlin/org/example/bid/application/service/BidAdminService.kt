@@ -1,11 +1,11 @@
 package org.example.bid.application.service
 
 import auction.auctionbidapi.error.BidErrorCode
-import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
-import auction.auctionproductapi.product.client.ProductClient
 import auction.auctionproductapi.product.dto.ProductCommonResponse
-import auction.auctionuserapi.user.client.UserClient
+import org.example.auction.product.feign.auction.AuctionFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
+import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.application.dto.BidResponse
 import org.example.bid.domain.bid.dto.BidHistoryResponse
 import org.example.bid.domain.bid.entity.Bid
@@ -21,20 +21,20 @@ import java.time.LocalDateTime
 @Service
 class BidAdminService(
     private val bidRepository: BidRepository,
-    private val auctionClient: AuctionClient,
-    private val productClient: ProductClient,
-    private val userClient: UserClient,
+    private val auctionFeignClient: AuctionFeignClient,
+    private val productFeignClient: ProductFeignClient,
+    private val userFeignClient: UserFeignClient,
 ) {
     @Transactional(readOnly = true)
     fun findBidHistorySlice(userId: Long, pageable: Pageable): Slice<BidHistoryResponse> {
         val bidPage: Slice<Bid> = bidRepository.findSliceByBidderId(userId, pageable)
 
         val auctionIds: List<Long> = bidPage.content.map { it.auctionId }
-        val auctions: List<AuctionCommonResponse> = auctionClient.auctionListModuleDto(auctionIds)
+        val auctions: List<AuctionCommonResponse> = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap: Map<Long, AuctionCommonResponse> = auctions.associateBy { it.auctionId }
 
         val productIds: List<Long> = auctions.map { it.productId }
-        val products: List<ProductCommonResponse> = productClient.productListModuleDto(productIds)
+        val products: List<ProductCommonResponse> = productFeignClient.productListModuleDto(productIds)
         val productMap: Map<Long, ProductCommonResponse> = products.associateBy { it.productId }
 
         val responseContent = bidPage.content.map { bid ->
@@ -64,7 +64,7 @@ class BidAdminService(
             return SliceImpl(emptyList(), pageable, false)
         }
 
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         return bidSlice.map { bid ->
             BidResponse(
