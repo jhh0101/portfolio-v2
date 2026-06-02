@@ -1,12 +1,11 @@
 package org.example.seller.domain.seller.service
 
 import auction.auctionsellerapi.status.SellerStatus
-import auction.auctionuserapi.user.client.UserClient
-import auction.auctionuserapi.user.client.UserSellerClient
 import auction.auctionuserapi.user.dto.UserCommonResponse
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.Role
 import jakarta.transaction.Transactional
+import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.common.global.error.GlobalErrorCode
 import org.example.seller.application.dto.SellerApplyRequest
@@ -20,14 +19,13 @@ import java.util.Optional
 @Transactional
 class SellerProcessor(
     private val sellerRepository: SellerRepository,
-    private val userClient: UserClient,
-    private val userSellerClient: UserSellerClient,
+    private val userFeignClient: UserFeignClient,
 ) {
 
     fun sellerApply(userId: Long, request: SellerApplyRequest) : Pair<Seller, UserCommonResponse> {
         validateUserProtection(userId)
 
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         val optionalSeller: Optional<Seller> = sellerRepository.findByUserId(userId)
         val seller: Seller?
@@ -63,7 +61,7 @@ class SellerProcessor(
             throw CustomException(GlobalErrorCode.BAD_REQUEST, "사용자 정보가 일치하지 않습니다.")
         }
 
-        val userDto = userClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         seller.updateApply(request)
 
@@ -79,8 +77,8 @@ class SellerProcessor(
             throw CustomException(GlobalErrorCode.BAD_REQUEST, "취소할 수 없는 상태입니다. (이미 취소 또는 반려됨)")
         }
 
-        val userDto = userClient.userModuleDto(userId)
-        userSellerClient.userUpdateRole(userId, Role.USER)
+        val userDto = userFeignClient.userModuleDto(userId)
+        userFeignClient.userUpdateRole(userId, Role.USER)
 
         seller.cancelSeller()
 

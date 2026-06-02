@@ -6,10 +6,12 @@ import auction.auctionproductapi.product.client.ProductCategoryClient
 import auction.auctionproductapi.product.client.ProductClient
 import auction.auctionproductapi.product.client.ProductDetailClient
 import auction.auctionproductapi.product.client.ProductUserClient
+import auction.auctionproductapi.product.command.ProductUserCommandClient
 import auction.auctionproductapi.product.dto.ProductCommonResponse
 import auction.auctionproductapi.product.dto.ProductDetailResponse
 import auction.auctionproductapi.product.status.ProductStatus
 import org.springframework.cloud.openfeign.FeignClient
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @FeignClient(name = "auction-product-service", url = "http://localhost:8082")
 @RequestMapping("/internal/product")
-interface ProductFeignClient : ProductBidClient, ProductCategoryClient, ProductClient, ProductDetailClient, ProductUserClient {
+interface ProductFeignClient : ProductBidClient,
+    ProductCategoryClient, ProductClient,
+    ProductDetailClient, ProductUserClient,
+    ProductUserCommandClient {
 
     @GetMapping("/{id}")
     override fun productModuleDto(@PathVariable("id") productId: Long) : ProductCommonResponse
@@ -45,4 +50,7 @@ interface ProductFeignClient : ProductBidClient, ProductCategoryClient, ProductC
 
     @GetMapping("/{id}/list")
     override fun findAllByUserId(@PathVariable("id") userId: Long) : List<ProductCommonResponse>
+
+    @DeleteMapping("/{id}/delete")
+    override fun deleteProductsBySuspendedUser(@PathVariable("id") userId: Long)
 }
