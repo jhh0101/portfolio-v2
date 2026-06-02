@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import org.example.product.domain.product.dto.ProductListCondition
 import org.example.product.domain.product.entity.Product
 import auction.auctionproductapi.product.status.ProductStatus
+import com.querydsl.core.types.dsl.Expressions
 import org.example.product.domain.product.entity.QProduct.product
 import org.example.auction.domain.auction.entity.QAuction.auction
 import org.springframework.data.domain.Page
@@ -101,9 +102,9 @@ class ProductQueryRepository(
     }
 
     private fun categoryIdIn(targetCategoryIds: List<Long>?): BooleanExpression? {
-        return if (!targetCategoryIds.isNullOrEmpty()) {
-            product.categoryId.`in`(targetCategoryIds)
-        } else null
+        if (targetCategoryIds == null) return null
+        if (targetCategoryIds.isEmpty()) return Expressions.FALSE
+        return product.categoryId.`in`(targetCategoryIds)
     }
 
     private fun statusFilter(userId: Long?): BooleanExpression? {

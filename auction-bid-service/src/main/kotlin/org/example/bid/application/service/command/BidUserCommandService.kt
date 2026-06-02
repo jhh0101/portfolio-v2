@@ -49,7 +49,8 @@ class BidUserCommandService(
                     bidService.cancelBid(
                         userDto.userId,
                         userBid.bidId ?: throw CustomException(BidErrorCode.BID_NOT_FOUND),
-                        auctionDto.auctionId
+                        auctionDto.auctionId,
+                        true
                     )
                 } else {
                     log.info("사용자가 상위 입찰자가 아니므로 취소 패스 - AuctionId: {}", auctionDto.auctionId)
