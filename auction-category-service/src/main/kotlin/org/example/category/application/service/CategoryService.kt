@@ -1,7 +1,7 @@
 package org.example.category.application.service
 
 import auction.auctioncategoryapi.error.CategoryErrorCode
-import auction.auctionproductapi.product.client.ProductCategoryClient
+import org.example.auction.product.feign.ProductFeignClient
 import org.example.category.application.dto.CategoryRequest
 import org.example.category.application.dto.CategoryResponse
 import org.example.category.application.dto.toDto
@@ -13,13 +13,12 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.List
 import kotlin.collections.map
-import kotlin.plus
 
 @Service
 @Transactional
 class CategoryService(
     val categoryRepository: CategoryRepository,
-    val productCategoryClient: ProductCategoryClient,
+    val productFeignClient: ProductFeignClient,
 ) {
     fun addCategory(request: CategoryRequest): CategoryResponse {
 
@@ -83,7 +82,7 @@ class CategoryService(
             throw CustomException(CategoryErrorCode.CATEGORY_HAS_CHILDREN)
         }
 
-        val existsProduct = productCategoryClient.existsByCategoryId(id)
+        val existsProduct = productFeignClient.existsByCategoryId(id)
 
         if (existsProduct) {
             throw CustomException(CategoryErrorCode.CATEGORY_HAS_PRODUCT)

@@ -11,7 +11,9 @@ dependencies {
 
     // interface
     implementation(project(":auction-category-api"))
-    implementation(project(":auction-product-api"))
+
+    // Feign
+    implementation(project(":auction-product-feign"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
