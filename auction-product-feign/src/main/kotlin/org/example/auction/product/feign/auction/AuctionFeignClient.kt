@@ -34,5 +34,5 @@ interface AuctionFeignClient : AuctionBidClient, AuctionClient {
     override fun auctionValidStatus(auctionDto: AuctionCommonResponse,@PathVariable("id") auctionId: Long)
 
     @PatchMapping("/{id}/update/price")
-    override fun updateCurrentPrice(@PathVariable("id") auctionId: Long, bidPrice: Long)
+    override fun updateCurrentPrice(@PathVariable("id") auctionId: Long, @RequestParam("bidPrice") bidPrice: Long)
 }

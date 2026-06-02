@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bid_db\
+    url: jdbc:postgresql://localhost:5432/bid_db
     username: auction_user
     password: auction_password
 

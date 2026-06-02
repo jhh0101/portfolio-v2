@@ -13,7 +13,7 @@ interface ProductImageRepository : JpaRepository<ProductImage, Long> {
 
     @Modifying
     @Query(
-        ("UPDATE ProductImage p SET p.imageOrder = p.imageOrder + 1" +
+        ("UPDATE ProductImage p SET p.imageOrder = p.imageOrder + 1 " +
                 "WHERE p.product.productId = :productId " +
                 "AND p.imageOrder >= :newOrder " +
                 "AND p.imageOrder < :oldOrder")

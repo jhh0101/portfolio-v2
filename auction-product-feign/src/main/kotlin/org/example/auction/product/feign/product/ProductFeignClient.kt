@@ -46,7 +46,7 @@ interface ProductFeignClient : ProductBidClient,
     override fun productDetailResponse(@PathVariable("id") productId: Long) : ProductDetailResponse
 
     @GetMapping("/{productIds}/detail/list")
-    override fun productDetailResponses(@PathVariable("productIds") productIds: List<Long>) : List<ProductDetailResponse>
+    override fun productDetailResponses(@RequestParam("productIds") productIds: List<Long>) : List<ProductDetailResponse>
 
     @GetMapping("/{id}/list")
     override fun findAllByUserId(@PathVariable("id") userId: Long) : List<ProductCommonResponse>
