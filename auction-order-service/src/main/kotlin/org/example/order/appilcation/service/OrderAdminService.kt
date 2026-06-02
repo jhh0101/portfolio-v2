@@ -1,7 +1,7 @@
 package org.example.order.appilcation.service
 
 import auction.auctionproductapi.auction.client.AuctionClient
-import auction.auctionproductapi.product.client.ProductDetailClient
+import org.example.auction.product.feign.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.order.appilcation.dto.OrderResponse
 import org.example.order.appilcation.dto.toDto
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class OrderAdminService(
     private val orderRepository: OrderRepository,
     private val userFeignClient: UserFeignClient,
-    private val productDetailClient: ProductDetailClient,
+    private val productFeignClient: ProductFeignClient,
     private val auctionClient: AuctionClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -37,7 +37,7 @@ class OrderAdminService(
         val auctionMap = auctionDtos.associateBy { it.auctionId }
 
         val productIds = auctionDtos.map { it.productId }.distinct()
-        val productDtos = productDetailClient.productDetailResponses(productIds)
+        val productDtos = productFeignClient.productDetailResponses(productIds)
         val productMap = productDtos.associateBy { it.productId }
 
         // 4. 데이터 최종 조립
