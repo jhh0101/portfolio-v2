@@ -17,6 +17,7 @@ import org.example.product.domain.product.dto.*
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.entity.ProductImage
 import auction.auctionproductapi.product.error.ProductErrorCode
+import org.example.auction.category.feign.CategoryFeignClient
 import org.example.auction.s3.service.S3Service
 import org.example.auction.user.feign.UserFeignClient
 import org.example.product.domain.product.repository.ProductImageRepository
@@ -41,8 +42,7 @@ class ProductService(
     private val productQueryRepository: ProductQueryRepository,
     private val productProcessor: ProductProcessor,
     private val userFeignClient: UserFeignClient,
-    private val categoryClient: CategoryClient,
-    private val categoryProductClient: CategoryProductClient,
+    private val categoryFeignClient: CategoryFeignClient,
     private val bidClient: BidClient,
     private val redisZSetHelper: RedisZSetHelper,
     private val s3Service: S3Service,
@@ -53,7 +53,7 @@ class ProductService(
     @Transactional
     fun addProduct(userId: Long, productRequest: ProductRequest, auctionRequest: AuctionRequest): ProductResponse {
         val userDto = userFeignClient.userModuleDto(userId)
-        val categoryDto = categoryClient.categoryModuleDto(productRequest.categoryId)
+        val categoryDto = categoryFeignClient.categoryModuleDto(productRequest.categoryId)
 
         val product = Product(
             sellerId = userDto.userId,
@@ -96,7 +96,7 @@ class ProductService(
     ): Page<ProductAndAuctionResponse> {
         val filterCategoryIds = condition.path
             ?.takeIf { it.isNotBlank() } // 비어있지 않을 때만 다음 단계 진행
-            ?.let { path -> categoryProductClient.categoryDtoByPath(path).map { it.categoryId } }
+            ?.let { path -> categoryFeignClient.categoryDtoByPath(path).map { it.categoryId } }
 
         val auctions: Page<Product> = productQueryRepository.productList(null, condition, filterCategoryIds, pageable)
 
@@ -104,7 +104,7 @@ class ProductService(
 
         val fetchedCategoryIds: List<Long> = auctions.map { it.categoryId }.distinct().toList()
 
-        val displayCategoryDtos = categoryProductClient.categoryDtoByIds(fetchedCategoryIds)
+        val displayCategoryDtos = categoryFeignClient.categoryListModuleDto(fetchedCategoryIds)
 
         val categoryMap = displayCategoryDtos.associateBy { it.categoryId }
 
@@ -130,7 +130,7 @@ class ProductService(
         val userDto = userFeignClient.userModuleDto(product.sellerId)
         val isSeller = userDto.userId == userId
 
-        val categoryDto = categoryClient.categoryModuleDto(product.categoryId)
+        val categoryDto = categoryFeignClient.categoryModuleDto(product.categoryId)
 
         val (shouldIncrease, newCookieValue) = productProcessor.validateFindProductDetail(
             productId, isSeller, viewedCookieValue
@@ -155,7 +155,7 @@ class ProductService(
 
         val filterCategoryIds = condition.path
             ?.takeIf { it.isNotBlank() } // 비어있지 않을 때만 다음 단계 진행
-            ?.let { path -> categoryProductClient.categoryDtoByPath(path).map { it.categoryId } }
+            ?.let { path -> categoryFeignClient.categoryDtoByPath(path).map { it.categoryId } }
 
         val auctions: Page<Product> = productQueryRepository.productList(userId, condition, filterCategoryIds, pageable)
 
@@ -163,7 +163,7 @@ class ProductService(
 
         val fetchedCategoryIds: List<Long> = auctions.map { it.categoryId }.distinct().toList()
 
-        val displayCategoryDtos = categoryProductClient.categoryDtoByIds(fetchedCategoryIds)
+        val displayCategoryDtos = categoryFeignClient.categoryListModuleDto(fetchedCategoryIds)
 
         val categoryMap = displayCategoryDtos.associateBy { it.categoryId }
 
@@ -194,7 +194,7 @@ class ProductService(
         }
 
         val userDto = userFeignClient.userModuleDto(userId)
-        val categoryDto = categoryClient.categoryModuleDto(productRequest.categoryId)
+        val categoryDto = categoryFeignClient.categoryModuleDto(productRequest.categoryId)
 
         product.updateProduct(
             categoryDto.categoryId,

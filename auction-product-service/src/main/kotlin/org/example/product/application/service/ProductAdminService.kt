@@ -1,8 +1,7 @@
 package org.example.product.application.service
 
-import auction.auctioncategoryapi.client.CategoryClient
-import auction.auctioncategoryapi.client.CategoryProductClient
 import auction.auctioncategoryapi.dto.CategoryCommonResponse
+import org.example.auction.category.feign.CategoryFeignClient
 import org.example.product.domain.product.dto.ProductAndAuctionResponse
 import org.example.product.domain.product.dto.ProductListCondition
 import org.example.product.domain.product.dto.toProductAndAuctionDto
@@ -19,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 class ProductAdminService(
     private val productQueryRepository: ProductQueryRepository,
     private val userFeignClient: UserFeignClient,
-    private val categoryProductClient: CategoryProductClient,
-    private val categoryClient: CategoryClient,
+    private val categoryFeignClient: CategoryFeignClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -31,7 +29,7 @@ class ProductAdminService(
         pageable: Pageable
     ): Slice<ProductAndAuctionResponse> {
         val filterCategoryIds: List<Long>? = if (!condition.path.isNullOrBlank()) {
-            categoryProductClient.categoryDtoByPath(condition.path).map { it.categoryId }
+            categoryFeignClient.categoryDtoByPath(condition.path).map { it.categoryId }
         } else null
 
         val auctions: Slice<Product> =
@@ -43,7 +41,7 @@ class ProductAdminService(
 
         val userDto = userFeignClient.userModuleDto(userId)
 
-        val displayCategoryDtos = categoryClient.categoryListModuleDto(fetchedCategoryIds)
+        val displayCategoryDtos = categoryFeignClient.categoryListModuleDto(fetchedCategoryIds)
 
         val categoryMap = displayCategoryDtos.associateBy { it.categoryId }
 
