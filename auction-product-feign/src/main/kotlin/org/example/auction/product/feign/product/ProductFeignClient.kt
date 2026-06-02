@@ -1,4 +1,4 @@
-package org.example.auction.product.feign
+package org.example.auction.product.feign.product
 
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.client.ProductBidClient

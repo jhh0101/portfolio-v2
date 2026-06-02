@@ -14,7 +14,7 @@ import org.example.bid.domain.bid.dto.toDto
 import org.example.bid.domain.bid.entity.Bid
 import auction.auctionbidapi.status.BidStatus
 import auction.auctionbidapi.error.BidErrorCode
-import org.example.auction.product.feign.ProductFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.domain.bid.repository.BidRepository
 import org.example.bid.domain.bid.service.BidProcessor

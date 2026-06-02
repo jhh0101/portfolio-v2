@@ -1,7 +1,7 @@
 package org.example.category.application.service
 
 import auction.auctioncategoryapi.error.CategoryErrorCode
-import org.example.auction.product.feign.ProductFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.category.application.dto.CategoryRequest
 import org.example.category.application.dto.CategoryResponse
 import org.example.category.application.dto.toDto
