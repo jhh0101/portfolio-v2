@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/internal/user")
+@RequestMapping("/internal/product")
 class InternalProductQueryController(
     private val productCommonService: ProductCommonService,
     private val productBidService: ProductBidService,
