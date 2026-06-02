@@ -11,11 +11,11 @@ dependencies {
     implementation(project(":auction-product-service"))
 
     // interface
-    implementation(project(":auction-product-api"))
     implementation(project(":auction-bid-api"))
 
     // feign
     implementation(project(":auction-user-feign"))
+    implementation(project(":auction-product-feign"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
