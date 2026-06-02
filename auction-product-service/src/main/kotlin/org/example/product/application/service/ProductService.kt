@@ -1,9 +1,6 @@
 package org.example.product.application.service
 
-import auction.auctionbidapi.client.BidClient
 import auction.auctionbidapi.status.BidStatus
-import auction.auctioncategoryapi.client.CategoryClient
-import auction.auctioncategoryapi.client.CategoryProductClient
 import auction.auctioncategoryapi.dto.CategoryCommonResponse
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.status.ProductStatus
@@ -17,6 +14,7 @@ import org.example.product.domain.product.dto.*
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.entity.ProductImage
 import auction.auctionproductapi.product.error.ProductErrorCode
+import org.example.auction.bid.feign.BidFeignClient
 import org.example.auction.category.feign.CategoryFeignClient
 import org.example.auction.s3.service.S3Service
 import org.example.auction.user.feign.UserFeignClient
@@ -43,7 +41,7 @@ class ProductService(
     private val productProcessor: ProductProcessor,
     private val userFeignClient: UserFeignClient,
     private val categoryFeignClient: CategoryFeignClient,
-    private val bidClient: BidClient,
+    private val bidFeignClient: BidFeignClient,
     private val redisZSetHelper: RedisZSetHelper,
     private val s3Service: S3Service,
 ) {
@@ -189,7 +187,7 @@ class ProductService(
             throw CustomException(GlobalErrorCode.BAD_REQUEST, "사용자가 일치하지 않습니다.")
         }
 
-        if (bidClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
+        if (bidFeignClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
             throw CustomException(ProductErrorCode.CANNOT_MODIFY_AFTER_BID, "입찰한 상품은 수정할 수 없습니다.")
         }
 
@@ -221,7 +219,7 @@ class ProductService(
             throw CustomException(GlobalErrorCode.BAD_REQUEST, "사용자가 일치하지 않습니다.")
         }
 
-        if (bidClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
+        if (bidFeignClient.existsByStatusAndAuction(BidStatus.ACTIVE, product.auction?.auctionId)) {
             throw CustomException(ProductErrorCode.CANNOT_MODIFY_AFTER_BID, "입찰한 상품은 수정할 수 없습니다.")
         }
         for (img in product.images) {

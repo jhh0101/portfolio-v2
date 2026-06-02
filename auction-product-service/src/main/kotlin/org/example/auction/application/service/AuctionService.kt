@@ -1,10 +1,10 @@
 package org.example.auction.application.service
 
-import auction.auctionbidapi.client.BidAuctionClient
 import auction.auctionbidapi.dto.BidCommonResponse
 import org.example.auction.domain.auction.entity.Auction
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.auction.error.AuctionErrorCode
+import org.example.auction.bid.feign.BidFeignClient
 import org.example.auction.domain.auction.repository.AuctionRepository
 import org.example.auction.domain.auction.service.AuctionProcessor
 import org.example.auction.order.feign.OrderFeignClient
@@ -18,7 +18,7 @@ import java.util.*
 class AuctionService(
     private val auctionRepository: AuctionRepository,
     private val auctionProcessor: AuctionProcessor,
-    private val bidAuctionClient: BidAuctionClient,
+    private val bidFeignClient: BidFeignClient,
     private val orderFeignClient: OrderFeignClient,
     private val userFeignClient: UserFeignClient
 ) {
@@ -32,7 +32,7 @@ class AuctionService(
 
         auction.changeStatus(AuctionStatus.ENDED)
 
-        val topBid: Optional<BidCommonResponse> = Optional.of(bidAuctionClient.findTopByStatusAndAuctionOrderByBidIdDesc(auctionId))
+        val topBid: Optional<BidCommonResponse> = Optional.of(bidFeignClient.findTopByStatusAndAuctionOrderByBidIdDesc(auctionId))
 
         auctionProcessor.validateFinishAuction(auction, topBid, userFeignClient, userDto, orderFeignClient)
 

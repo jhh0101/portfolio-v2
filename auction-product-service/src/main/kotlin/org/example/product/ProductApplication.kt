@@ -13,7 +13,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients
     basePackages = [
         "org.example.auction.user.feign",
         "org.example.auction.order.feign",
-        "org.example.auction.category.feign"
+        "org.example.auction.category.feign",
+        "org.example.auction.bid.feign"
     ]
 )
 class ProductApplication
