@@ -3,6 +3,7 @@ package org.example.user.application.user.service
 import auction.auctionbidapi.command.BidUserCommandClient
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.UserStatus
+import org.example.auction.bid.feign.BidFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.common.global.error.CustomException
 import org.example.user.application.auth.service.RefreshTokenService
@@ -29,7 +30,7 @@ class UserAdminService(
     private val userRepository: UserRepository,
     private val userQueryRepository: UserQueryRepository,
     private val refreshTokenService: RefreshTokenService,
-    private val bidUserCommandClient: BidUserCommandClient,
+    private val bidFeignClient: BidFeignClient,
     private val productFeignClient: ProductFeignClient,
 ) {
     @Transactional
@@ -39,7 +40,7 @@ class UserAdminService(
         val user = userRepository.findByIdOrNull(userId)
             ?: throw CustomException(UserErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.")
 
-        val bidList = bidUserCommandClient.cancelActiveBidsAndGetRefundTargets(userId)
+        val bidList = bidFeignClient.cancelActiveBidsAndGetRefundTargets(userId)
 
         val bidderIds = bidList.map { it.bidderId }.toSet()
 
