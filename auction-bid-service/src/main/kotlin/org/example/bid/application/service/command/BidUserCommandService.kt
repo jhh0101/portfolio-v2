@@ -8,7 +8,7 @@ import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.status.ProductStatus
-import org.example.auction.product.feign.ProductFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.application.service.BidService
 import org.example.bid.domain.bid.entity.Bid

@@ -7,7 +7,7 @@ import auction.auctionproductapi.auction.error.AuctionErrorCode
 import auction.auctionproductapi.product.error.ProductErrorCode
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.Role
-import org.example.auction.product.feign.ProductFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.common.global.error.GlobalErrorCode

@@ -3,7 +3,7 @@ package org.example.user.application.user.service
 import auction.auctionbidapi.command.BidUserCommandClient
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.UserStatus
-import org.example.auction.product.feign.ProductFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.common.global.error.CustomException
 import org.example.user.application.auth.service.RefreshTokenService
 import org.example.user.application.user.dto.UserDeleteResponse

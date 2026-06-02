@@ -21,7 +21,7 @@ import auction.auctionuserapi.user.type.Role
 import org.example.user.domain.user.entity.User
 import auction.auctionuserapi.user.type.UserStatus
 import auction.auctionuserapi.user.error.UserErrorCode
-import org.example.auction.product.feign.ProductFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.seller.feign.SellerFeignClient
 import org.example.user.application.user.dto.toWithdrawalStatusDto
 import org.example.user.domain.user.repository.UserRepository

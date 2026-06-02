@@ -4,7 +4,7 @@ import auction.auctionbidapi.error.BidErrorCode
 import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.product.dto.ProductCommonResponse
-import org.example.auction.product.feign.ProductFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.application.dto.BidResponse
 import org.example.bid.domain.bid.dto.BidHistoryResponse

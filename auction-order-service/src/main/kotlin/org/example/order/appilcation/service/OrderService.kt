@@ -2,7 +2,7 @@ package org.example.order.appilcation.service
 
 import auction.auctionorderapi.error.OrderErrorCode
 import auction.auctionproductapi.auction.client.AuctionClient
-import org.example.auction.product.feign.ProductFeignClient
+import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.order.appilcation.dto.OrderResponse
