@@ -17,6 +17,7 @@ dependencies {
     // feign
     implementation(project(":auction-user-feign"))
     implementation(project(":auction-product-feign"))
+    implementation(project(":auction-order-feign"))
 
     // Redis & Redisson
     implementation("org.redisson:redisson:3.42.0")

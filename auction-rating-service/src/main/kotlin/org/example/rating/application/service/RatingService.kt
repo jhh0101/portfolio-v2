@@ -1,11 +1,11 @@
 package org.example.rating.application.service
 
-import auction.auctionorderapi.client.OrderClient
 import auction.auctionorderapi.error.OrderErrorCode
 import auction.auctionproductapi.auction.error.AuctionErrorCode
 import auction.auctionproductapi.product.error.ProductErrorCode
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.Role
+import org.example.auction.order.feign.OrderFeignClient
 import org.example.auction.product.feign.auction.AuctionFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional
 class RatingService(
     val ratingRepository: RatingRepository,
     val ratingQueryRepository: RatingQueryRepository,
-    val orderClient: OrderClient,
+    val orderFeignClient: OrderFeignClient,
     val userFeignClient: UserFeignClient,
     val productFeignClient: ProductFeignClient,
     val auctionFeignClient: AuctionFeignClient,
@@ -39,7 +39,7 @@ class RatingService(
 
     @Transactional
     fun createRating(userId: Long, orderId: Long, request: RatingRequest): RatingResponse {
-        val orderDto = orderClient.orderModuleDto(orderId)
+        val orderDto = orderFeignClient.orderModuleDto(orderId)
 
         if (orderDto.buyerId != userId) {
             throw CustomException(OrderErrorCode.BUYER_MISMATCH)
@@ -79,7 +79,7 @@ class RatingService(
             ?: throw CustomException(RatingErrorCode.RATING_NOT_FOUND)
         val toUserDto = userFeignClient.userModuleDto(rating.toUserId)
         val fromUserDto = userFeignClient.userModuleDto(rating.fromUserId)
-        val orderDto = orderClient.orderModuleDto(orderId)
+        val orderDto = orderFeignClient.orderModuleDto(orderId)
         val auctionDto = auctionFeignClient.auctionModuleDto(orderDto.auctionId)
         val productDto = productFeignClient.productModuleDto(auctionDto.productId)
 
@@ -105,7 +105,7 @@ class RatingService(
 
         userFeignClient.updateUserRating(rating.toUserId, ratingAvg)
 
-        val orderDto = orderClient.orderModuleDto(orderId)
+        val orderDto = orderFeignClient.orderModuleDto(orderId)
 
         val toUserDto = userFeignClient.userModuleDto(userId)
         val fromUserDto = userFeignClient.userModuleDto(rating.fromUserId)
@@ -149,7 +149,7 @@ class RatingService(
         val fromUserMap = fromUserDtos.associateBy { it.userId }
 
         val orderIds = ratings.map { it.orderId }.toSet().toList()
-        val orderDtos = orderClient.orderListModuleDto(orderIds)
+        val orderDtos = orderFeignClient.orderListModuleDto(orderIds)
         val orderMap = orderDtos.associateBy { it.orderId }
 
         val auctionIds = orderDtos.map { it.auctionId }.toSet().toList()
