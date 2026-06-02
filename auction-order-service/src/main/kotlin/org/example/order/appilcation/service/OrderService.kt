@@ -2,7 +2,7 @@ package org.example.order.appilcation.service
 
 import auction.auctionorderapi.error.OrderErrorCode
 import auction.auctionproductapi.auction.client.AuctionClient
-import auction.auctionproductapi.product.client.ProductDetailClient
+import org.example.auction.product.feign.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.order.appilcation.dto.OrderResponse
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 class OrderService(
     private val orderRepository: OrderRepository,
     private val userFeignClient: UserFeignClient,
-    private val productDetailClient: ProductDetailClient,
+    private val productFeignClient: ProductFeignClient,
     private val auctionClient: AuctionClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -40,7 +40,7 @@ class OrderService(
         val auctionMap = auctionDtos.associateBy { it.auctionId }
 
         val productIds = auctionDtos.map { it.productId }.distinct()
-        val productDtos = productDetailClient.productDetailResponses(productIds)
+        val productDtos = productFeignClient.productDetailResponses(productIds)
         val productMap = productDtos.associateBy { it.productId }
 
         // 4. 데이터 최종 조립
@@ -64,7 +64,7 @@ class OrderService(
 
         val auctionDto = auctionClient.auctionModuleDto(order.auctionId)
 
-        val productDto = productDetailClient.productDetailResponse(auctionDto.productId)
+        val productDto = productFeignClient.productDetailResponse(auctionDto.productId)
 
         log.info("옥션 {}의 낙찰자 조회", auctionId)
         return order.toDto(userDto, productDto, auctionDto)
