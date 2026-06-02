@@ -29,3 +29,4 @@ include("auction-gateway")
 
 // feign 모듈
 include("auction-user-feign")
+include("auction-product-feign")
