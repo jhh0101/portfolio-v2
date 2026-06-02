@@ -1,32 +1,28 @@
 package org.example.seller.domain.seller.service
 
 import auction.auctionsellerapi.status.SellerStatus
-import auction.auctionuserapi.user.client.UserClient
-import auction.auctionuserapi.user.client.UserSellerClient
 import auction.auctionuserapi.user.dto.UserCommonResponse
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.Role
 import jakarta.transaction.Transactional
+import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.common.global.error.GlobalErrorCode
 import org.example.seller.application.dto.SellerRejectRequest
 import org.example.seller.domain.seller.entity.Seller
-import org.example.seller.domain.seller.repository.SellerRepository
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 @Service
 @Transactional
 class SellerAdminProcessor(
-    private val sellerRepository: SellerRepository,
-    private val userClient: UserClient,
-    private val userSellerClient: UserSellerClient,
+    private val userFeignClient: UserFeignClient,
 ) {
 
     fun sellerList(sellers: Page<Seller>) : Map<Long, UserCommonResponse> {
         val userIds = sellers.map { it.userId }.toSet().toList()
 
-        return userClient.getUsersByIds(userIds)
+        return userFeignClient.getUsersByIds(userIds)
     }
 
     fun approveSeller(seller: Seller) : UserCommonResponse{
@@ -39,9 +35,9 @@ class SellerAdminProcessor(
             )
         }
 
-        val userDto = userClient.userModuleDto(seller.userId)
+        val userDto = userFeignClient.userModuleDto(seller.userId)
 
-        userSellerClient.userUpdateRole(seller.userId, Role.SELLER)
+        userFeignClient.userUpdateRole(seller.userId, Role.SELLER)
 
         seller.approveSeller()
 
@@ -56,7 +52,7 @@ class SellerAdminProcessor(
             )
         }
 
-        val userDto = userClient.userModuleDto(seller.userId)
+        val userDto = userFeignClient.userModuleDto(seller.userId)
 
         seller.rejectSeller(request.rejectReason)
 

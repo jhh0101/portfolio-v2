@@ -1,9 +1,9 @@
 package org.example.user.application.user.service
 
 import auction.auctionbidapi.command.BidUserCommandClient
-import auction.auctionproductapi.product.command.ProductUserCommandClient
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.UserStatus
+import org.example.auction.product.feign.ProductFeignClient
 import org.example.common.global.error.CustomException
 import org.example.user.application.auth.service.RefreshTokenService
 import org.example.user.application.user.dto.UserDeleteResponse
@@ -30,7 +30,7 @@ class UserAdminService(
     private val userQueryRepository: UserQueryRepository,
     private val refreshTokenService: RefreshTokenService,
     private val bidUserCommandClient: BidUserCommandClient,
-    private val productUserCommandClient: ProductUserCommandClient,
+    private val productFeignClient: ProductFeignClient,
 ) {
     @Transactional
     fun suspend(userId: Long, request: UserSuspensionRequest): UserDeleteResponse {
@@ -49,7 +49,7 @@ class UserAdminService(
             usersMap[bid.bidderId]?.addPoint(bid.bidPrice)
         }
 
-        productUserCommandClient.deleteProductsBySuspendedUser(userId)
+        productFeignClient.deleteProductsBySuspendedUser(userId)
 
         refreshTokenService.deleteRefreshToken(userId)
 

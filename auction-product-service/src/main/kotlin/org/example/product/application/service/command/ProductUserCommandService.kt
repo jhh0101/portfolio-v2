@@ -2,11 +2,10 @@ package org.example.product.application.service.command
 
 import auction.auctionproductapi.auction.error.AuctionErrorCode
 import auction.auctionproductapi.product.command.ProductUserCommandClient
+import org.example.auction.s3.service.S3Service
 import org.example.common.global.error.CustomException
-import org.example.common.global.s3.service.S3Service
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.repository.ProductRepository
-import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
