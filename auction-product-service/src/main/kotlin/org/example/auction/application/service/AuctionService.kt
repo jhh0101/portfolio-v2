@@ -4,11 +4,11 @@ import auction.auctionbidapi.client.BidAuctionClient
 import auction.auctionbidapi.dto.BidCommonResponse
 import org.example.auction.domain.auction.entity.Auction
 import auction.auctionproductapi.auction.status.AuctionStatus
-import auction.auctionuserapi.user.client.UserClient
 import auction.auctionproductapi.auction.error.AuctionErrorCode
 import org.example.auction.domain.auction.repository.AuctionRepository
 import org.example.auction.domain.auction.service.AuctionProcessor
 import org.example.auction.order.feign.OrderFeignClient
+import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,7 +20,7 @@ class AuctionService(
     private val auctionProcessor: AuctionProcessor,
     private val bidAuctionClient: BidAuctionClient,
     private val orderFeignClient: OrderFeignClient,
-    private val userClient: UserClient
+    private val userFeignClient: UserFeignClient
 ) {
 
     @Transactional
@@ -28,13 +28,13 @@ class AuctionService(
         val auction: Auction = auctionRepository.findByIdWithPessimisticLock(auctionId)
             ?: throw CustomException(AuctionErrorCode.AUCTION_NOT_FOUND, "옥션을 찾을 수 없습니다.")
 
-        val userDto = userClient.userModuleDto(auction.product.sellerId)
+        val userDto = userFeignClient.userModuleDto(auction.product.sellerId)
 
         auction.changeStatus(AuctionStatus.ENDED)
 
         val topBid: Optional<BidCommonResponse> = Optional.of(bidAuctionClient.findTopByStatusAndAuctionOrderByBidIdDesc(auctionId))
 
-        auctionProcessor.validateFinishAuction(auction, topBid, userClient, userDto, orderFeignClient)
+        auctionProcessor.validateFinishAuction(auction, topBid, userFeignClient, userDto, orderFeignClient)
 
     }
 }

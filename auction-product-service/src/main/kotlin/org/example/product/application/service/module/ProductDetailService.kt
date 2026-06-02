@@ -1,11 +1,11 @@
 package org.example.product.application.service.module
 
-import auction.auctioncategoryapi.client.CategoryClient
 import auction.auctioncategoryapi.error.CategoryErrorCode
 import auction.auctionproductapi.product.client.ProductDetailClient
 import auction.auctionproductapi.product.dto.ProductDetailResponse
 import auction.auctionproductapi.product.error.ProductErrorCode
 import auction.auctionuserapi.user.error.UserErrorCode
+import org.example.auction.category.feign.CategoryFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.example.product.domain.product.entity.ProductImage
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Service
 class ProductDetailService(
     private val productRepository: ProductRepository,
     private val userFeignClient: UserFeignClient,
-    private val categoryClient: CategoryClient,
+    private val categoryFeignClient: CategoryFeignClient,
 ) : ProductDetailClient{
     override fun productDetailResponse(productId: Long): ProductDetailResponse {
         val product = productRepository.findByIdOrNull(productId)
             ?: throw CustomException(ProductErrorCode.PRODUCT_NOT_FOUND)
         val userDto = userFeignClient.userModuleDto(product.sellerId)
-        val categoryDto = categoryClient.categoryModuleDto(product.categoryId)
+        val categoryDto = categoryFeignClient.categoryModuleDto(product.categoryId)
 
         val mainUrl: String = product.images.stream()
             .filter({ img -> img.imageOrder == 1 })
@@ -51,7 +51,7 @@ class ProductDetailService(
         val categoryIds = products.map { it.categoryId }.distinct()
 
         val userMap = userFeignClient.userListModuleDto(sellerIds).associateBy { it.userId }
-        val categoryMap = categoryClient.categoryListModuleDto(categoryIds).associateBy { it.categoryId }
+        val categoryMap = categoryFeignClient.categoryListModuleDto(categoryIds).associateBy { it.categoryId }
 
         // 4. 최종 조립 및 반환
         return products.map { product ->
