@@ -1,5 +1,6 @@
 package org.example.product.application.service
 
+import auction.auctioncategoryapi.client.CategoryClient
 import auction.auctioncategoryapi.client.CategoryProductClient
 import auction.auctioncategoryapi.dto.CategoryCommonResponse
 import org.example.product.domain.product.dto.ProductAndAuctionResponse
@@ -19,6 +20,7 @@ class ProductAdminService(
     private val productQueryRepository: ProductQueryRepository,
     private val userFeignClient: UserFeignClient,
     private val categoryProductClient: CategoryProductClient,
+    private val categoryClient: CategoryClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -41,7 +43,7 @@ class ProductAdminService(
 
         val userDto = userFeignClient.userModuleDto(userId)
 
-        val displayCategoryDtos = categoryProductClient.categoryDtoByIds(fetchedCategoryIds)
+        val displayCategoryDtos = categoryClient.categoryListModuleDto(fetchedCategoryIds)
 
         val categoryMap = displayCategoryDtos.associateBy { it.categoryId }
 
