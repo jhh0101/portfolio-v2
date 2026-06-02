@@ -10,13 +10,13 @@ dependencies {
     implementation(project(":auction-common"))
 
     // interface
-    implementation(project(":auction-product-api"))
     implementation(project(":auction-rating-api"))
     implementation(project(":auction-order-api"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // feign
     implementation(project(":auction-user-feign"))
+    implementation(project(":auction-product-feign"))
 
     // Redis & Redisson
     implementation("org.redisson:redisson:3.42.0")
