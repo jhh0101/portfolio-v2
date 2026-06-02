@@ -4,10 +4,10 @@ import auction.auctionbidapi.command.BidUserCommandClient
 import auction.auctionbidapi.dto.BidCommonResponse
 import auction.auctionbidapi.error.BidErrorCode
 import auction.auctionbidapi.status.BidStatus
-import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.status.ProductStatus
+import org.example.auction.product.feign.auction.AuctionFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.application.service.BidService
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service
 class BidUserCommandService(
     private val bidRepository: BidRepository,
     private val bidService: BidService,
-    private val auctionClient: AuctionClient,
+    private val auctionFeignClient: AuctionFeignClient,
     private val userFeignClient: UserFeignClient,
     private val productFeignClient: ProductFeignClient,
 ) : BidUserCommandClient {
@@ -37,7 +37,7 @@ class BidUserCommandService(
         for (userBid in userBids) {
             val auctionId = userBid.auctionId
             val auctionDto = auctionCache.getOrPut(auctionId) {
-                auctionClient.auctionModuleDto(auctionId)
+                auctionFeignClient.auctionModuleDto(auctionId)
             }
             if (auctionDto.status === AuctionStatus.PROCEEDING.name) {
                 val currentTopBid: Bid =

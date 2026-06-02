@@ -1,9 +1,9 @@
 package org.example.bid.application.service
 
 import auction.auctionbidapi.error.BidErrorCode
-import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.product.dto.ProductCommonResponse
+import org.example.auction.product.feign.auction.AuctionFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.application.dto.BidResponse
@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 @Service
 class BidAdminService(
     private val bidRepository: BidRepository,
-    private val auctionClient: AuctionClient,
+    private val auctionFeignClient: AuctionFeignClient,
     private val productFeignClient: ProductFeignClient,
     private val userFeignClient: UserFeignClient,
 ) {
@@ -30,7 +30,7 @@ class BidAdminService(
         val bidPage: Slice<Bid> = bidRepository.findSliceByBidderId(userId, pageable)
 
         val auctionIds: List<Long> = bidPage.content.map { it.auctionId }
-        val auctions: List<AuctionCommonResponse> = auctionClient.auctionListModuleDto(auctionIds)
+        val auctions: List<AuctionCommonResponse> = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap: Map<Long, AuctionCommonResponse> = auctions.associateBy { it.auctionId }
 
         val productIds: List<Long> = auctions.map { it.productId }
