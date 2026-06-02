@@ -1,15 +1,12 @@
 package org.example.bid.domain.bid.service
 
-import auction.auctionproductapi.auction.client.AuctionBidClient
-import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.product.dto.ProductCommonResponse
-import auction.auctionuserapi.user.client.UserBidClient
-import auction.auctionuserapi.user.client.UserClient
 import auction.auctionuserapi.user.dto.UserCommonResponse
 import org.example.bid.domain.bid.entity.Bid
 import auction.auctionbidapi.status.BidStatus
 import auction.auctionbidapi.error.BidErrorCode
+import org.example.auction.product.feign.auction.AuctionFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
 import org.springframework.stereotype.Service
@@ -18,8 +15,7 @@ import java.time.LocalDateTime
 @Service
 class BidProcessor(
     private val userFeignClient: UserFeignClient,
-    private val auctionClient: AuctionClient,
-    private val auctionBidClient: AuctionBidClient,
+    private val auctionFeignClient: AuctionFeignClient,
 ) {
 
     fun addBid(
@@ -40,7 +36,7 @@ class BidProcessor(
         }
 
         userFeignClient.userSubPoint(userDto.userId, bidPrice)
-        auctionBidClient.updateCurrentPrice(auctionDto.auctionId, bidPrice)
+        auctionFeignClient.updateCurrentPrice(auctionDto.auctionId, bidPrice)
 
         return Bid(auctionId = auctionDto.auctionId, bidderId = userDto.userId, bidPrice = bidPrice, status = BidStatus.ACTIVE)
     }
@@ -67,9 +63,9 @@ class BidProcessor(
         currentTopBid: Bid,
         bidList: List<Bid>
     ) {
-        val bidAuctionDto = auctionClient.auctionModuleDto(bid.auctionId)
+        val bidAuctionDto = auctionFeignClient.auctionModuleDto(bid.auctionId)
 
-        auctionBidClient.auctionValidStatus(auctionDto, bid.auctionId)
+        auctionFeignClient.auctionValidStatus(auctionDto, bid.auctionId)
 
         userFeignClient.userValidCheck(userId, bid.bidderId)
 
@@ -105,7 +101,7 @@ class BidProcessor(
             val userDto = userFeignClient.userModuleDto(bidderId)
             val bidderPoint = userDto.userPoint
             if (bidderPoint >= lastBidder.bidPrice) {
-                auctionBidClient.updateCurrentPrice(auctionDto.auctionId, lastBidder.bidPrice)
+                auctionFeignClient.updateCurrentPrice(auctionDto.auctionId, lastBidder.bidPrice)
                 userFeignClient.userSubPoint(userDto.userId, lastBidder.bidPrice)
                 bidFound = true
                 break
@@ -115,7 +111,7 @@ class BidProcessor(
         }
 
         if (!bidFound) {
-            auctionBidClient.updateCurrentPrice(auctionDto.auctionId, bidAuctionDto.startPrice)
+            auctionFeignClient.updateCurrentPrice(auctionDto.auctionId, bidAuctionDto.startPrice)
         }
     }
 }

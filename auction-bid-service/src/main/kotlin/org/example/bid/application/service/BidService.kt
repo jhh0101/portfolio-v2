@@ -1,7 +1,5 @@
 package org.example.bid.application.service
 
-import auction.auctionproductapi.auction.client.AuctionBidClient
-import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.product.dto.ProductCommonResponse
 import auction.auctionuserapi.user.dto.UserCommonResponse
@@ -14,6 +12,7 @@ import org.example.bid.domain.bid.dto.toDto
 import org.example.bid.domain.bid.entity.Bid
 import auction.auctionbidapi.status.BidStatus
 import auction.auctionbidapi.error.BidErrorCode
+import org.example.auction.product.feign.auction.AuctionFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.domain.bid.repository.BidRepository
@@ -30,8 +29,7 @@ import org.springframework.transaction.annotation.Transactional
 class BidService(
     private val bidRepository: BidRepository,
     private val userFeignClient: UserFeignClient,
-    private val auctionClient: AuctionClient,
-    private val auctionBidClient: AuctionBidClient,
+    private val auctionFeignClient: AuctionFeignClient,
     private val productFeignClient: ProductFeignClient,
     private val bidProcessor: BidProcessor,
 ) {
@@ -40,7 +38,7 @@ class BidService(
     fun addBid(userId: Long, auctionId: Long, request: BidRequest): BidResultResponse {
         val userDto: UserCommonResponse = userFeignClient.userModuleDto(userId)
 
-        val auctionDto: AuctionCommonResponse = auctionBidClient.auctionLockModuleDto(auctionId)
+        val auctionDto: AuctionCommonResponse = auctionFeignClient.auctionLockModuleDto(auctionId)
 
         val productDto = productFeignClient.productModuleDto(auctionDto.productId)
 
@@ -71,7 +69,7 @@ class BidService(
 
         val auctionIds: List<Long> = bidPage.content.map { it.auctionId }
 
-        val auctions: List<AuctionCommonResponse> = auctionClient.auctionListModuleDto(auctionIds)
+        val auctions: List<AuctionCommonResponse> = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap: Map<Long, AuctionCommonResponse> = auctions.associateBy { it.auctionId }
 
         val productIds: List<Long> = auctions.map { it.productId }
@@ -94,7 +92,7 @@ class BidService(
 
     @Transactional
     fun cancelBid(userId: Long, bidId: Long, auctionId: Long): BidResultResponse {
-        val auctionDto = auctionBidClient.auctionLockModuleDto(auctionId)
+        val auctionDto = auctionFeignClient.auctionLockModuleDto(auctionId)
 
         val productDto = productFeignClient.productModuleDto(auctionDto.productId)
 
