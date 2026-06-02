@@ -7,8 +7,8 @@ import auction.auctionbidapi.status.BidStatus
 import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.dto.AuctionCommonResponse
 import auction.auctionproductapi.auction.status.AuctionStatus
-import auction.auctionproductapi.product.client.ProductBidClient
 import auction.auctionproductapi.product.status.ProductStatus
+import org.example.auction.product.feign.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.bid.application.service.BidService
 import org.example.bid.domain.bid.entity.Bid
@@ -23,11 +23,11 @@ class BidUserCommandService(
     private val bidService: BidService,
     private val auctionClient: AuctionClient,
     private val userFeignClient: UserFeignClient,
-    private val productBidClient: ProductBidClient,
+    private val productFeignClient: ProductFeignClient,
 ) : BidUserCommandClient {
     private val log = LoggerFactory.getLogger(javaClass)
     override fun cancelActiveBidsAndGetRefundTargets(userId: Long) : List<BidCommonResponse>{
-        val auctionIds = productBidClient.findAuctionIdsBySellerId(userId, AuctionStatus.PROCEEDING, ProductStatus.ACTIVE)
+        val auctionIds = productFeignClient.findAuctionIdsBySellerId(userId, AuctionStatus.PROCEEDING, ProductStatus.ACTIVE)
         val bidList: List<Bid> = bidRepository.findTopBidsByAuctionIds(auctionIds)
         val userBids: List<Bid> = bidRepository.findLatestBidsByUserId(userId)
         val userDto = userFeignClient.userModuleDto(userId)
