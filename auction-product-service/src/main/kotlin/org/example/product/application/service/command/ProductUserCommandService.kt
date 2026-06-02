@@ -6,13 +6,14 @@ import org.example.auction.s3.service.S3Service
 import org.example.common.global.error.CustomException
 import org.example.product.domain.product.entity.Product
 import org.example.product.domain.product.repository.ProductRepository
+import org.example.redis.zset.RedisZSetHelper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class ProductUserCommandService(
     private val productRepository: ProductRepository,
-    private val redissonClient: RedissonClient,
+    private val redisZSetHelper: RedisZSetHelper,
     private val s3Service: S3Service,
 ) : ProductUserCommandClient {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -31,8 +32,7 @@ class ProductUserCommandService(
 
         productRepository.deleteAllBySellerId(userId)
 
-        val closingQueue = redissonClient.getScoredSortedSet<Long?>("auction:closing")
-        closingQueue.removeAll(auctionIds)
+        redisZSetHelper.queueRemoveAll("auction:closing", auctionIds)
 
         try {
             s3Service.deleteFiles(allImageUrls)
