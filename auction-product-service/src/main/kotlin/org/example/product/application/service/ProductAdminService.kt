@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ProductAdminService(
     private val productQueryRepository: ProductQueryRepository,
-    private val userFeginClient: UserFeignClient,
+    private val userFeignClient: UserFeignClient,
     private val categoryProductClient: CategoryProductClient,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -39,7 +39,7 @@ class ProductAdminService(
 
         val fetchedCategoryIds: List<Long> = auctions.map { it.categoryId }.distinct().toList()
 
-        val userDto = userFeginClient.userModuleDto(userId)
+        val userDto = userFeignClient.userModuleDto(userId)
 
         val displayCategoryDtos = categoryProductClient.categoryDtoByIds(fetchedCategoryIds)
 
