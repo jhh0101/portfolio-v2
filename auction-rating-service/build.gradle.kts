@@ -11,7 +11,6 @@ dependencies {
 
     // interface
     implementation(project(":auction-rating-api"))
-    implementation(project(":auction-order-api"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // feign

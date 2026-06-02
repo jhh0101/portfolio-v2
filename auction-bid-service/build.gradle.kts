@@ -7,7 +7,6 @@ plugins {
 
 dependencies {
     implementation(project(":auction-common"))
-    implementation(project(":auction-product-service"))
 
     // interface
     implementation(project(":auction-bid-api"))
