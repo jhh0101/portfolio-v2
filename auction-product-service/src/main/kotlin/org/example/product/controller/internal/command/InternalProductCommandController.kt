@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/internal/user")
+@RequestMapping("/internal/product")
 class InternalProductCommandController(
     private val productUserCommandService: ProductUserCommandService,
 ) {
