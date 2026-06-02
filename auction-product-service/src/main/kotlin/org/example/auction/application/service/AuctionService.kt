@@ -2,13 +2,13 @@ package org.example.auction.application.service
 
 import auction.auctionbidapi.client.BidAuctionClient
 import auction.auctionbidapi.dto.BidCommonResponse
-import auction.auctionorderapi.client.OrderClient
 import org.example.auction.domain.auction.entity.Auction
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionuserapi.user.client.UserClient
 import auction.auctionproductapi.auction.error.AuctionErrorCode
 import org.example.auction.domain.auction.repository.AuctionRepository
 import org.example.auction.domain.auction.service.AuctionProcessor
+import org.example.auction.order.feign.OrderFeignClient
 import org.example.common.global.error.CustomException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,7 +19,7 @@ class AuctionService(
     private val auctionRepository: AuctionRepository,
     private val auctionProcessor: AuctionProcessor,
     private val bidAuctionClient: BidAuctionClient,
-    private val orderClient: OrderClient,
+    private val orderFeignClient: OrderFeignClient,
     private val userClient: UserClient
 ) {
 
@@ -34,7 +34,7 @@ class AuctionService(
 
         val topBid: Optional<BidCommonResponse> = Optional.of(bidAuctionClient.findTopByStatusAndAuctionOrderByBidIdDesc(auctionId))
 
-        auctionProcessor.validateFinishAuction(auction, topBid, userClient, userDto, orderClient)
+        auctionProcessor.validateFinishAuction(auction, topBid, userClient, userDto, orderFeignClient)
 
     }
 }
