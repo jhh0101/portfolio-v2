@@ -1,7 +1,5 @@
 package org.example.user.application.user.service
 
-import auction.auctionbidapi.client.BidClient
-import auction.auctionproductapi.product.client.ProductClient
 import auction.auctionsellerapi.status.SellerStatus
 import org.example.user.application.auth.dto.SecurityUser
 import org.example.common.global.error.CustomException
@@ -21,6 +19,7 @@ import auction.auctionuserapi.user.type.Role
 import org.example.user.domain.user.entity.User
 import auction.auctionuserapi.user.type.UserStatus
 import auction.auctionuserapi.user.error.UserErrorCode
+import org.example.auction.bid.feign.BidFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.seller.feign.SellerFeignClient
 import org.example.user.application.user.dto.toWithdrawalStatusDto
@@ -40,10 +39,10 @@ import org.springframework.transaction.annotation.Transactional
 class UserService(
     private val productFeignClient: ProductFeignClient,
     private val sellerFeignClient: SellerFeignClient,
+    private val bidFeignClient: BidFeignClient,
     private val passwordEncoder: PasswordEncoder,
     private val userProcessor: UserProcessor,
     private val userRepository: UserRepository,
-    private val bidClient: BidClient,
 ) : UserDetailsService {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -86,7 +85,7 @@ class UserService(
 
         val matchesPassword: Boolean = passwordEncoder.matches(request.password, user.password)
 
-        val bidCount = bidClient.bidCount(userId)
+        val bidCount = bidFeignClient.bidCount(userId)
         val productCount = productFeignClient.productCount(userId)
 
         userProcessor.validateWithdrawn(matchesPassword, user, bidCount, productCount)
@@ -135,7 +134,7 @@ class UserService(
         val user = userRepository.findByIdOrNull(userId)
             ?: throw CustomException(UserErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.")
 
-        val bidCount = bidClient.bidCount(userId)
+        val bidCount = bidFeignClient.bidCount(userId)
         val productCount = productFeignClient.productCount(userId)
 
         return user.toWithdrawalStatusDto(bidCount, productCount)
