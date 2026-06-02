@@ -2,11 +2,11 @@ package org.example.rating.application.service
 
 import auction.auctionorderapi.client.OrderClient
 import auction.auctionorderapi.error.OrderErrorCode
-import auction.auctionproductapi.auction.client.AuctionClient
 import auction.auctionproductapi.auction.error.AuctionErrorCode
 import auction.auctionproductapi.product.error.ProductErrorCode
 import auction.auctionuserapi.user.error.UserErrorCode
 import auction.auctionuserapi.user.type.Role
+import org.example.auction.product.feign.auction.AuctionFeignClient
 import org.example.auction.product.feign.product.ProductFeignClient
 import org.example.auction.user.feign.UserFeignClient
 import org.example.common.global.error.CustomException
@@ -34,7 +34,7 @@ class RatingService(
     val orderClient: OrderClient,
     val userFeignClient: UserFeignClient,
     val productFeignClient: ProductFeignClient,
-    val auctionClient: AuctionClient,
+    val auctionFeignClient: AuctionFeignClient,
 ) {
 
     @Transactional
@@ -67,7 +67,7 @@ class RatingService(
 
         userFeignClient.updateUserRating(ratingSave.toUserId, ratingAvg)
 
-        val auctionDto = auctionClient.auctionModuleDto(orderDto.auctionId)
+        val auctionDto = auctionFeignClient.auctionModuleDto(orderDto.auctionId)
         val productDto = productFeignClient.productModuleDto(auctionDto.productId)
 
         return ratingSave.toDto(toUserDto, fromUserDto, productDto)
@@ -80,7 +80,7 @@ class RatingService(
         val toUserDto = userFeignClient.userModuleDto(rating.toUserId)
         val fromUserDto = userFeignClient.userModuleDto(rating.fromUserId)
         val orderDto = orderClient.orderModuleDto(orderId)
-        val auctionDto = auctionClient.auctionModuleDto(orderDto.auctionId)
+        val auctionDto = auctionFeignClient.auctionModuleDto(orderDto.auctionId)
         val productDto = productFeignClient.productModuleDto(auctionDto.productId)
 
         return rating.toDto(toUserDto, fromUserDto, productDto)
@@ -110,7 +110,7 @@ class RatingService(
         val toUserDto = userFeignClient.userModuleDto(userId)
         val fromUserDto = userFeignClient.userModuleDto(rating.fromUserId)
 
-        val auctionDto = auctionClient.auctionModuleDto(orderDto.auctionId)
+        val auctionDto = auctionFeignClient.auctionModuleDto(orderDto.auctionId)
         val productDto = productFeignClient.productModuleDto(auctionDto.productId)
 
         return rating.toDto(toUserDto, fromUserDto, productDto)
@@ -153,7 +153,7 @@ class RatingService(
         val orderMap = orderDtos.associateBy { it.orderId }
 
         val auctionIds = orderDtos.map { it.auctionId }.toSet().toList()
-        val auctionDtos = auctionClient.auctionListModuleDto(auctionIds)
+        val auctionDtos = auctionFeignClient.auctionListModuleDto(auctionIds)
         val auctionMap = auctionDtos.associateBy { it.auctionId }
 
         val productIds = auctionDtos.map { it.productId }.toSet().toList()
