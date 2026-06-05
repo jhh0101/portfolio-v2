@@ -1,6 +1,7 @@
 package org.example.common.global.config
 
 import org.example.common.global.auth.filter.HeaderAuthenticationFilter
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Lazy
@@ -20,8 +21,8 @@ import org.springframework.web.cors.CorsConfiguration
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@EnableConfigurationProperties(JwtProperties::class)
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class SecurityConfig(
     @param:Lazy
     private val headerAuthenticationFilter: HeaderAuthenticationFilter,

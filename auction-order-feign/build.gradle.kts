@@ -9,6 +9,6 @@ dependencies {
     api(project(":auction-order-api"))
 
     // Feign
-    api("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1")
+    api("org.springframework.cloud:spring-cloud-starter-openfeign")
 }
 

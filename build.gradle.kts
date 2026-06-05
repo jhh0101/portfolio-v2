@@ -4,7 +4,7 @@ plugins {
     kotlin("plugin.spring") version kotlinVersion apply false
     kotlin("plugin.jpa") version kotlinVersion apply false
     kotlin("kapt") version kotlinVersion apply false // QueryDSL 처리를 위한 Kapt 플러그인
-    id("org.springframework.boot") version "4.0.0" apply false
+    id("org.springframework.boot") version "4.0.6" apply false
 }
 
 allprojects {
@@ -13,6 +13,9 @@ allprojects {
 
     repositories {
         mavenCentral()
+
+        maven { url = uri("https://repo.spring.io/milestone") }
+        maven { url = uri("https://repo.spring.io/snapshot") }
     }
 }
 
@@ -23,7 +26,8 @@ subprojects {
     apply(plugin = "org.springframework.boot")
 
     dependencies {
-        "implementation"(platform("org.springframework.boot:spring-boot-dependencies:4.0.0"))
+        "implementation"(platform("org.springframework.boot:spring-boot-dependencies:4.0.6"))
+        "implementation"(platform("org.springframework.cloud:spring-cloud-dependencies:2025.1.1"))
 
         // 코틀린 공통
         "implementation"("org.jetbrains.kotlin:kotlin-reflect")

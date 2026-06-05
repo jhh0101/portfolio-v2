@@ -7,9 +7,8 @@ plugins {
 }
 
 dependencies {
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:4.0.0"))
-    kapt(platform("org.springframework.boot:spring-boot-dependencies:4.0.0"))
-    annotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:4.0.0"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:4.0.6"))
+    kapt(platform("org.springframework.boot:spring-boot-dependencies:4.0.6"))
 
     // 1. Web & Security (서비스의 뼈대)
     api("org.springframework.boot:spring-boot-starter-web")           // Spring MVC 기반 API 개발
@@ -33,7 +32,6 @@ dependencies {
     // 5. Build & Configuration (설정 및 어노테이션 처리)
     // Configuration Properties를 IDE가 인식하고 자동완성 도와주는 도구
     kapt("org.springframework.boot:spring-boot-configuration-processor")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 tasks.bootJar {

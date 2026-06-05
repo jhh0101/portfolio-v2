@@ -1,18 +1,28 @@
 plugins {
-    id("org.springframework.boot") version "4.0.0" apply true // SCG는 실행 모듈이므로 boot 사용
+    id("org.springframework.boot")
     kotlin("jvm")
     kotlin("plugin.spring")
     id("io.spring.dependency-management")
 }
 
+repositories {
+    mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
+    maven { url = uri("https://repo.spring.io/snapshot") }
+}
+
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.1.1")
     }
 }
 
 dependencies {
-    implementation(project(":auction-common"))
-    implementation("org.springframework.cloud:spring-cloud-starter-gateway")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation(project(":auction-common")) {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-web")
+    }
+
+    compileOnly("jakarta.servlet:jakarta.servlet-api:6.1.0")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux")
 }

@@ -33,7 +33,7 @@ dependencies {
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
 
     // 2. Kapt 설정
-    kapt(platform("org.springframework.boot:spring-boot-dependencies:4.0.0"))
+    kapt(platform("org.springframework.boot:spring-boot-dependencies:4.0.6"))
 
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
     kapt("jakarta.annotation:jakarta.annotation-api")

@@ -10,12 +10,14 @@ import org.example.common.global.config.JwtProperties
 import org.example.common.global.error.CustomException
 import org.example.common.global.error.GlobalErrorCode
 import org.slf4j.LoggerFactory
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service
 import java.nio.charset.StandardCharsets
 import java.util.Date
 import javax.crypto.SecretKey
 
 @Service
+@EnableConfigurationProperties(JwtProperties::class)
 class JwtService(
     private val jwtProperties: JwtProperties
 ) {
