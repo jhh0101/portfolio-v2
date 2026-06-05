@@ -5,17 +5,21 @@ import auction.auctionbidapi.dto.BidCommonResponse
 import auction.auctionorderapi.client.OrderClient
 import auction.auctionproductapi.auction.status.AuctionStatus
 import auction.auctionproductapi.product.status.ProductStatus
-import auction.auctionuserapi.user.client.UserClient
 import auction.auctionuserapi.user.dto.UserCommonResponse
+import org.example.auction.order.feign.OrderFeignClient
+import org.example.auction.user.feign.UserFeignClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import java.util.Optional
 
 @Service
 class AuctionProcessor {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    fun validateFinishAuction(auction: Auction, topBid: Optional<BidCommonResponse>, user: UserClient, userDto: UserCommonResponse, order: OrderClient) : OrderClient? {
+    fun validateFinishAuction(auction: Auction, topBid: Optional<BidCommonResponse>, user: UserFeignClient, userDto: UserCommonResponse, order: OrderFeignClient) : OrderFeignClient? {
         if (auction.status != AuctionStatus.PROCEEDING) {
             return null
         }
@@ -28,6 +32,7 @@ class AuctionProcessor {
                 buyerId = winnerBid.bidId,
                 finalPrice = winnerBid.bidPrice
             )
+
             user.userAddPoint(userDto.userId, auction.currentPrice)
             auction.product.changeStatus(ProductStatus.SOLD)
             log.info("경매 낙찰 완료 - ID: {}", auction.auctionId)

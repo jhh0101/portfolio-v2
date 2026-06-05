@@ -21,16 +21,16 @@ spring:
       port: 6379
       password: 1234
 
-  cloud:
-    aws:
-      s3:
-        bucket: ${ORACLE_BUCKET}
-        endpoint: ${ORACLE_ENDPOINT}
-      region:
-        static: ${ORACLE_REGION}
-      credentials:
-        access-key: ${ORACLE_ACCESS_KEY_ID}
-        secret-key: ${ORACLE_SECRET_ACCESS_KEY}
+cloud:
+  aws:
+    s3:
+      bucket: local-bucket  # MinIO 버킷명
+      endpoint: http://localhost:9000 # MinIO 주소
+    region:
+      static: us-east-1 # MinIO는 보통 기본값
+    credentials:
+      access-key: minioadmin # MinIO ID
+      secret-key: minioadmin # MinIO PW
 
   threads:
     virtual:

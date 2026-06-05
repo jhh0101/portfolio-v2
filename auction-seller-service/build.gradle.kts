@@ -1,23 +1,3 @@
-dependencies {
-    implementation(project(":auction-common"))
-
-    // interface
-    implementation(project(":auction-seller-api"))
-
-    // feign
-    implementation(project(":auction-user-feign"))
-
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-
-    // jpa
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-    // 개발 편의성
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-}
-
 plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
@@ -29,11 +9,17 @@ dependencies {
     implementation(project(":auction-common"))
 
     // interface
-    implementation(project(":auction-rating-api"))
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation(project(":auction-seller-api"))
 
     // feign
     implementation(project(":auction-user-feign"))
+
+    // jpa
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // 2. Kapt 설정
     kapt(platform("org.springframework.boot:spring-boot-dependencies:4.0.6"))
