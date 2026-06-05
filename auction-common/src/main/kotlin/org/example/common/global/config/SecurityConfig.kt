@@ -38,6 +38,13 @@ class SecurityConfig(
             .formLogin { it.disable() }
             .httpBasic { it.disable() }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .exceptionHandling { exception ->
+                exception.authenticationEntryPoint { _, response, _ ->
+                    response.status = jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
+                    response.contentType = "application/json;charset=UTF-8"
+                    response.writer.write("{\"error\": \"Unauthorized\"}")
+                }
+            }
             .authorizeHttpRequests({ auth ->
                 auth
                     .requestMatchers(
